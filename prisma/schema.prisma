@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
     provider = "prisma-client-js"
 }
@@ -13,38 +7,77 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-enum PresenceEnum {
+// ===============
+//      USER
+// ===============
+model User {
+    id                   String       @id @default(auto()) @map("_id") @db.ObjectId
+    fullname             String
+    status               OnlineStatus
+    my_friends_ids       String[]     @db.ObjectId
+    iam_friends_with_ids String[]     @db.ObjectId
+    conversation_ids     String[]     @db.ObjectId
+
+    // Prisma underlying tables stuff
+    my_friends             User[]           @relation("Friends", fields: [my_friends_ids], references: [id])
+    iam_friends_with       User[]           @relation("Friends", fields: [iam_friends_with_ids], references: [id])
+    friendRequestsSent     FriendRequests[] @relation("RequestSent")
+    friendRequestsReceived FriendRequests[] @relation("RequestReceived")
+    SentMessages           Message[]
+    conversations          Conversation[]   @relation(fields: [conversation_ids], references: [id])
+}
+
+enum OnlineStatus {
     ONLINE
     OFFLINE
 }
 
-model User {
-    id              String       @id @default(auto()) @map("_id") @db.ObjectId
-    fullname        String
-    status          PresenceEnum
-    SentMessage     Message[]    @relation("Sender")
-    ReceivedMessage Message[]    @relation("Receiver")
+// =========================
+//      FRIEND REQUESTS
+// =========================
+model FriendRequests {
+    id         String @id @default(auto()) @map("_id") @db.ObjectId
+    sent_by_id String @db.ObjectId
+    sent_to_id String @db.ObjectId
+    sent_by    User   @relation("RequestSent", fields: [sent_by_id], references: [id])
+    sent_to    User   @relation("RequestReceived", fields: [sent_to_id], references: [id])
+
+    @@map("PendingRequests")
 }
 
-enum ReadStatus {
-    SENT
-    DELIVERED
-    SEEN
+enum FriendRequestStatus {
+    PENDING
+    ACCEPTED
+    REJECTED
 }
 
-model Message {
-    id          String     @id @default(auto()) @map("_id") @db.ObjectId
-    sender      User       @relation("Sender", fields: [sender_id], references: [id])
-    receiver    User       @relation("Receiver", fields: [receiver_id], references: [id])
-    sender_id   String     @db.ObjectId
-    receiver_id String     @db.ObjectId
-    status      ReadStatus
-}
-
+// =========================
+//      CONVERSATIONS
+// =========================
 model Conversation {
-    id String @id @default(auto()) @map("_id") @db.ObjectId
+    id          String           @id @default(auto()) @map("_id") @db.ObjectId
+    type        ConversationType
+    members_ids String[]         @db.ObjectId
+
+    members  User[]    @relation(fields: [members_ids], references: [id])
+    messages Message[]
 }
 
-model PendingRequest {
-    id String @id @default(auto()) @map("_id") @db.ObjectId
+enum ConversationType {
+    PRIVATE
+    GROUP
+}
+
+// =====================
+//      MESSAGES
+// =====================
+model Message {
+    id              String   @id @default(auto()) @map("_id") @db.ObjectId
+    sender_id       String   @db.ObjectId
+    conversation_id String   @db.ObjectId
+    text            String
+    timestamp       DateTime
+
+    sender       User         @relation(fields: [sender_id], references: [id])
+    conversation Conversation @relation(fields: [conversation_id], references: [id])
 }
