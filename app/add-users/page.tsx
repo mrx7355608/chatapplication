@@ -1,5 +1,6 @@
 "use client";
 
+import { sendFriendRequest } from "@/actions/friends";
 import { Spinner } from "@/components/Spinner";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
@@ -14,7 +15,7 @@ interface IUser {
 
 export default function SearchFriends() {
     const [query, setQuery] = useState("");
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<IUser | null>(null);
     const [loading, setLoading] = useState(false);
 
     const searchUser = async (e: FormEvent) => {
@@ -62,8 +63,18 @@ export default function SearchFriends() {
 }
 
 function UserCard({ user }: { user: IUser }) {
+    const [loading, setLoading] = useState(false);
+    const sendRequestWithId = sendFriendRequest.bind(user.id);
+
+    const handleOnClick = async () => {
+        setLoading(true);
+        await sendRequestWithId(user.id);
+        // TODO: show success / error alert according to resposne
+        setLoading(false);
+    };
+
     return (
-        <li className="flex items-center gap-3 border p-3 px-4 shadow-sm rounded-lg">
+        <div className="flex items-center gap-3 border p-3 px-4 shadow-sm rounded-lg">
             <Image
                 src={user.image}
                 width={60}
@@ -75,9 +86,15 @@ function UserCard({ user }: { user: IUser }) {
                 <p className="font-medium">{user.fullname}</p>
                 <p className="text-sm text-gray-500">@{user.username}</p>
             </div>
-            <button className="btn btn-outline btn-sm btn-ghost rounded-full ml-auto">
-                Add friend
+
+            {/* ADD FRIEND BUTTON */}
+            <button
+                className="btn btn-outline btn-sm btn-ghost rounded-full ml-auto"
+                onClick={handleOnClick}
+                disabled={loading}
+            >
+                {loading ? <Spinner size="xs" /> : "Add friend"}
             </button>
-        </li>
+        </div>
     );
 }
