@@ -1,6 +1,8 @@
 import { Webhook } from "svix";
-import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
+import { PrismaClient } from "@prisma/client";
+
+const db = new PrismaClient();
 
 export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
@@ -18,8 +20,6 @@ export async function POST(req: Request) {
   const svix_id = req.headers.get("svix-id");
   const svix_timestamp = req.headers.get("svix-timestamp");
   const svix_signature = req.headers.get("svix-signature");
-  console.log({ svix_id, svix_timestamp });
-  console.log(req.headers);
 
   // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
@@ -41,8 +41,8 @@ export async function POST(req: Request) {
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
     }) as WebhookEvent;
-  } catch (err) {
-    console.error("Error: Could not verify webhook:", err);
+  } catch (err: any) {
+    console.error("Error: Could not verify webhook:", err.stack);
     return new Response("Error: Verification error", {
       status: 400,
     });
@@ -50,8 +50,24 @@ export async function POST(req: Request) {
 
   // Do something with payload
   // For this guide, log payload to console
+
   if (evt.type === "user.created") {
-    console.log(evt.data);
+    const { id, username } = evt.data;
+    console.log("--------------------");
+    console.log("    Creating User   ");
+    console.log("--------------------");
+    console.log({ id, username });
+    try {
+      await db.user.create({
+        data: {
+          clerk_id: id,
+          username: username || "Anonymous",
+        },
+      });
+    } catch (err: any) {
+      console.log(err.stack);
+      return new Response("Webhook received", { status: 200 });
+    }
   }
 
   return new Response("Webhook received", { status: 200 });
