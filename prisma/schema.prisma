@@ -1,84 +1,86 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mongodb"
-    url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 // ===============
 //      USER
 // ===============
 model User {
-    id                   String       @id @default(auto()) @map("_id") @db.ObjectId
-    clerk_id             String
-    username             String
-    status               OnlineStatus @default(OFFLINE)
-    my_friends_ids       String[]     @default([]) @db.ObjectId
-    iam_friends_with_ids String[]     @default([]) @db.ObjectId
-    conversation_ids     String[]     @default([]) @db.ObjectId
+  id                   String       @id @default(auto()) @map("_id") @db.ObjectId
+  clerk_id             String
+  username             String
+  fullname             String
+  image                String
+  status               OnlineStatus @default(OFFLINE)
+  my_friends_ids       String[]     @default([]) @db.ObjectId
+  iam_friends_with_ids String[]     @default([]) @db.ObjectId
+  conversation_ids     String[]     @default([]) @db.ObjectId
 
-    // Prisma underlying tables stuff
-    my_friends             User[]           @relation("Friends", fields: [my_friends_ids], references: [id])
-    iam_friends_with       User[]           @relation("Friends", fields: [iam_friends_with_ids], references: [id])
-    friendRequestsSent     FriendRequests[] @relation("RequestSent")
-    friendRequestsReceived FriendRequests[] @relation("RequestReceived")
-    SentMessages           Message[]
-    conversations          Conversation[]   @relation(fields: [conversation_ids], references: [id])
+  // Prisma underlying tables stuff
+  my_friends             User[]           @relation("Friends", fields: [my_friends_ids], references: [id])
+  iam_friends_with       User[]           @relation("Friends", fields: [iam_friends_with_ids], references: [id])
+  friendRequestsSent     FriendRequests[] @relation("RequestSent")
+  friendRequestsReceived FriendRequests[] @relation("RequestReceived")
+  SentMessages           Message[]
+  conversations          Conversation[]   @relation(fields: [conversation_ids], references: [id])
 }
 
 enum OnlineStatus {
-    ONLINE
-    OFFLINE
+  ONLINE
+  OFFLINE
 }
 
 // =========================
 //      FRIEND REQUESTS
 // =========================
 model FriendRequests {
-    id         String @id @default(auto()) @map("_id") @db.ObjectId
-    sent_by_id String @db.ObjectId
-    sent_to_id String @db.ObjectId
-    sent_by    User   @relation("RequestSent", fields: [sent_by_id], references: [id])
-    sent_to    User   @relation("RequestReceived", fields: [sent_to_id], references: [id])
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  sent_by_id String @db.ObjectId
+  sent_to_id String @db.ObjectId
+  sent_by    User   @relation("RequestSent", fields: [sent_by_id], references: [id])
+  sent_to    User   @relation("RequestReceived", fields: [sent_to_id], references: [id])
 
-    @@map("PendingRequests")
+  @@map("PendingRequests")
 }
 
 enum FriendRequestStatus {
-    PENDING
-    ACCEPTED
-    REJECTED
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 // =========================
 //      CONVERSATIONS
 // =========================
 model Conversation {
-    id          String           @id @default(auto()) @map("_id") @db.ObjectId
-    type        ConversationType
-    members_ids String[]         @db.ObjectId
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  type        ConversationType
+  members_ids String[]         @db.ObjectId
 
-    members  User[]    @relation(fields: [members_ids], references: [id])
-    messages Message[]
+  members  User[]    @relation(fields: [members_ids], references: [id])
+  messages Message[]
 }
 
 enum ConversationType {
-    PRIVATE
-    GROUP
+  PRIVATE
+  GROUP
 }
 
 // =====================
 //      MESSAGES
 // =====================
 model Message {
-    id              String   @id @default(auto()) @map("_id") @db.ObjectId
-    sender_id       String   @db.ObjectId
-    conversation_id String   @db.ObjectId
-    text            String
-    timestamp       DateTime
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  sender_id       String   @db.ObjectId
+  conversation_id String   @db.ObjectId
+  text            String
+  timestamp       DateTime
 
-    sender       User         @relation(fields: [sender_id], references: [id])
-    conversation Conversation @relation(fields: [conversation_id], references: [id])
+  sender       User         @relation(fields: [sender_id], references: [id])
+  conversation Conversation @relation(fields: [conversation_id], references: [id])
 }
