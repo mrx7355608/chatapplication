@@ -1,62 +1,83 @@
 "use client";
 
+import { Spinner } from "@/components/Spinner";
 import Image from "next/image";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
-const users = [
-  { id: 1, name: "Alice Johnson", username: "@alice" },
-  { id: 2, name: "Bob Smith", username: "@bobsmith" },
-  { id: 3, name: "Charlie Brown", username: "@charlieb" },
-  { id: 4, name: "Diana Prince", username: "@wonderwoman" },
-  { id: 5, name: "Ethan Hunt", username: "@mission_possible" },
-];
+interface IUser {
+    id: string;
+    fullname: string;
+    username: string;
+    image: string;
+    clerk_id: string;
+}
 
 export default function SearchFriends() {
-  const [searchQuery, setSearchQuery] = useState("");
+    const [query, setQuery] = useState("");
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.username.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+    const searchUser = async (e: FormEvent) => {
+        e.preventDefault();
 
-  return (
-    <div className="w-full max-w-lg mx-auto p-4">
-      <h1 className="text-center text-3xl p-4 font-bold mb-4">
-        Search Friends
-      </h1>
-      <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="Search by name or username"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full input input-bordered rounded-xl mb-4"
-        />
-        <button className="btn btn-neutral text-white rounded-xl">
-          Search
-        </button>
-      </div>
-      <ul className="space-y-2 w-full">
-        {filteredUsers.map((user) => (
-          <li
-            key={user.id}
-            className="flex items-center gap-3 border p-3 px-4 rounded"
-          >
-            <div className="rounded-full object-fit bg-gray-100 w-[60px] h-[60px]"></div>
+        // If searchQuery string is empty, then dont call api
+        if (query.trim() === "") {
+            return;
+        }
+
+        setLoading(true);
+        const response = await fetch(`/api/search-users?username=${query}`);
+        const result = await response.json();
+        setUser(result.data);
+        setLoading(false);
+    };
+
+    return (
+        <div className="w-full max-w-lg mx-auto p-4">
+            <h1 className="text-center text-3xl p-4 font-bold mb-4">
+                Add Friends
+            </h1>
+            <form className="flex gap-2" onSubmit={searchUser}>
+                <input
+                    type="text"
+                    placeholder="Search by username"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="w-full input input-bordered rounded-xl mb-4"
+                />
+                <button
+                    className="btn btn-neutral text-white rounded-xl"
+                    disabled={loading}
+                >
+                    {loading ? <Spinner size="sm" /> : "Search"}
+                </button>
+            </form>
+            {user ? (
+                <UserCard user={user} />
+            ) : (
+                <p className="text-center text-gray-500 mt-4">No users found</p>
+            )}
+        </div>
+    );
+}
+
+function UserCard({ user }: { user: IUser }) {
+    return (
+        <li className="flex items-center gap-3 border p-3 px-4 shadow-sm rounded-lg">
+            <Image
+                src={user.image}
+                width={60}
+                height={60}
+                alt="user"
+                className="rounded-full object-fit"
+            />
             <div>
-              <p className="font-medium">{user.name}</p>
-              <p className="text-sm text-gray-500">{user.username}</p>
+                <p className="font-medium">{user.fullname}</p>
+                <p className="text-sm text-gray-500">@{user.username}</p>
             </div>
             <button className="btn btn-outline btn-sm btn-ghost rounded-full ml-auto">
-              Add friend
+                Add friend
             </button>
-          </li>
-        ))}
-      </ul>
-      {filteredUsers.length === 0 && (
-        <p className="text-center text-gray-500 mt-4">No users found</p>
-      )}
-    </div>
-  );
+        </li>
+    );
 }
