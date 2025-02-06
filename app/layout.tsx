@@ -25,15 +25,15 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <ClerkProvider>
-            <html lang="en" data-theme="light">
-                <body
-                    className={`flex ${geistSans.variable} ${geistMono.variable} antialiased`}
-                >
+        <html lang="en" data-theme="light">
+            <body
+                className={`flex ${geistSans.variable} ${geistMono.variable} antialiased`}
+            >
+                <ClerkProvider>
                     <VerticalNavbar />
                     {children}
-                </body>
-            </html>
-        </ClerkProvider>
+                </ClerkProvider>
+            </body>
+        </html>
     );
 }
