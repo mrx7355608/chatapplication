@@ -1,10 +1,8 @@
 "use server";
 
 import { currentUser } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-
-const prismaClient = new PrismaClient();
+import { prismaClient } from "@/lib/prisma";
 
 export async function sendFriendRequest(userId: string) {
     const loggedInUser = await currentUser();
@@ -20,7 +18,19 @@ export async function sendFriendRequest(userId: string) {
         return { error: "Account not found" };
     }
 
-    // TODO: check if user has already sent a friend request
+    // Check if user has already sent a friend request
+    const existingRequest = await prismaClient.friendRequests.findFirst({
+        where: {
+            sent_by_id: sender.id,
+        },
+    });
+    if (existingRequest) {
+        return {
+            error: "You have a already sent a friend request to this user",
+        };
+    }
+
+    // TODO: Check if the "receiver" is already a friend of current user
 
     // Make a FriendRequest record in db
     await prismaClient.friendRequests.create({
