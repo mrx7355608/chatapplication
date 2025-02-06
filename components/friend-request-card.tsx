@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { acceptRequest, rejectRequest } from "@/actions/friends";
 import { useState } from "react";
-import { Spinner } from "./Spinner";
+import { Spinner } from "./spinner";
 
 interface IFriendRequestSender {
     fullname: string;

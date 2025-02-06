@@ -1,7 +1,7 @@
 "use client";
 
 import { sendFriendRequest } from "@/actions/friends";
-import { Spinner } from "@/components/Spinner";
+import { Spinner } from "@/components/spinner";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 
@@ -68,9 +68,14 @@ function UserCard({ user }: { user: IUser }) {
 
     const handleOnClick = async () => {
         setLoading(true);
-        await sendRequestWithId(user.id);
-        // TODO: show success / error alert according to resposne
+        const response = await sendRequestWithId(user.id);
         setLoading(false);
+
+        if (response.error) {
+            // TODO: show error toast
+        } else if (response.ok) {
+            // TODO: show succes toast
+        }
     };
 
     return (

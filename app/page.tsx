@@ -1,4 +1,4 @@
-import ConversationsList from "@/components/ConversationList";
+import ConversationsList from "@/components/conversation-list";
 
 export default async function Home() {
     return (
