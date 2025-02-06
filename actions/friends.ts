@@ -8,7 +8,7 @@ const prismaClient = new PrismaClient();
 
 export async function sendFriendRequest(userId: string) {
     const loggedInUser = await currentUser();
-    if (loggedInUser === null) {
+    if (!loggedInUser) {
         return { error: "Not authenticated" };
     }
 
@@ -16,7 +16,7 @@ export async function sendFriendRequest(userId: string) {
     const sender = await prismaClient.user.findFirst({
         where: { clerk_id: loggedInUser.id },
     });
-    if (sender === null) {
+    if (!sender) {
         return { error: "Account not found" };
     }
 
