@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { prismaClient } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { FriendRequestCard } from "@/components/friend-request-card";
-
-const prismaClient = new PrismaClient();
 
 export default async function FriendRequests() {
     const loggedInUser = await currentUser();

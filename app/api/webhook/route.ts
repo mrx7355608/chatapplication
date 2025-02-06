@@ -1,8 +1,6 @@
 import { Webhook } from "svix";
 import { WebhookEvent } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
-
-const db = new PrismaClient();
+import { prismaClient } from "@/lib/prisma";
 
 export async function POST(req: Request) {
     const SIGNING_SECRET = process.env.SIGNING_SECRET;
@@ -54,7 +52,7 @@ export async function POST(req: Request) {
     if (evt.type === "user.created") {
         const { id, first_name, last_name, image_url, username } = evt.data;
         try {
-            await db.user.create({
+            await prismaClient.user.create({
                 data: {
                     clerk_id: id,
                     username: username || "Anonymous",
