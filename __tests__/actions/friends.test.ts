@@ -16,13 +16,19 @@ const mockFriendRequest = {
     sent_to_id: "user_456",
 };
 
+const friendID = "67a506847f2df7011c72c01b";
 const mockUser = {
     username: "John Doe",
+    my_friends_ids: [],
+    iam_friends_with_ids: [friendID],
+};
+const mockUserWithNoFriends = {
+    username: "John Doe",
+    my_friends_ids: [],
+    iam_friends_with_ids: [],
 };
 
 describe("Server actions test", () => {
-    const friendID = "67a506847f2df7011c72c01b";
-
     // Reset all mocks before each test so that the tests are not affected by the
     // previous mocks states and behave as expected
     beforeEach(() => {
@@ -52,14 +58,25 @@ describe("Server actions test", () => {
             ).mockResolvedValueOnce(mockFriendRequest);
 
             const response = await sendFriendRequest(friendID);
-            expect(response.error).toBe(
-                "You have a already sent a friend request to this user",
-            );
+            expect(response.error).toBe("A request is already pending");
         });
 
-        it("should send a friend request", async () => {
+        it("should return error if user tries to send request to an existing friend", async () => {
             (prismaClient.user.findFirst as jest.Mock).mockResolvedValue(
                 mockUser,
+            );
+            (
+                prismaClient.friendRequests.findFirst as jest.Mock
+            ).mockResolvedValueOnce(null);
+
+            const response = await sendFriendRequest(friendID);
+            expect(response.error).toBe(
+                "Cannot send request to an existing friend",
+            );
+        });
+        it("should send a friend request", async () => {
+            (prismaClient.user.findFirst as jest.Mock).mockResolvedValue(
+                mockUserWithNoFriends,
             );
             (prismaClient.friendRequests.create as jest.Mock).mockResolvedValue(
                 mockFriendRequest,

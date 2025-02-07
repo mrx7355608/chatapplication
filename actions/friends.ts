@@ -4,13 +4,13 @@ import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { prismaClient } from "@/lib/prisma";
 
-export async function sendFriendRequest(userId: string) {
+export async function sendFriendRequest(receiverId: string) {
     const loggedInUser = await currentUser();
     if (!loggedInUser) {
         return { error: "Not authenticated" };
     }
 
-    // Get MongoID of currently logged in user
+    // Get record of currently logged in user from MongoDB for his mongoID
     const sender = await prismaClient.user.findFirst({
         where: { clerk_id: loggedInUser.id },
     });
@@ -26,17 +26,23 @@ export async function sendFriendRequest(userId: string) {
     });
     if (existingRequest) {
         return {
-            error: "You have a already sent a friend request to this user",
+            error: "A request is already pending",
         };
     }
 
-    // TODO: Check if the "receiver" is already a friend of current user
+    //  Check if the "receiver" is already a friend of current user
+    const isFriend =
+        sender.my_friends_ids.includes(receiverId) ||
+        sender.iam_friends_with_ids.includes(receiverId);
+    if (isFriend) {
+        return { error: "Cannot send request to an existing friend" };
+    }
 
     // Make a FriendRequest record in db
     await prismaClient.friendRequests.create({
         data: {
             sent_by_id: sender.id,
-            sent_to_id: userId,
+            sent_to_id: receiverId,
         },
     });
     return { ok: true };
