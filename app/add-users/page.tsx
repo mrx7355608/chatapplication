@@ -71,13 +71,12 @@ function UserCard({ user }: { user: IUser }) {
     const handleOnClick = async () => {
         setLoading(true);
         const response = await sendRequestWithId(user.id);
-        setLoading(false);
-
         if (response.error) {
             addToast("error", response.error);
         } else if (response.ok) {
             addToast("success", "Request send successfully");
         }
+        setLoading(false);
     };
 
     return (
