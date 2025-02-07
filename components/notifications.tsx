@@ -1,11 +1,11 @@
 "use client";
 import useFcmToken from "@/hooks/useFcmToken";
-import React, { useEffect } from "react";
-import { onMessage } from "firebase/messaging";
-import { messaging } from "@/lib/firebase";
+import React from "react";
 
 const Notifications = () => {
-    const { fcmToken } = useFcmToken();
+    // Fetches the fcm token and registers an eventListener to show notifications
+    // while app is in foreground
+    useFcmToken();
 
     return <></>;
 };

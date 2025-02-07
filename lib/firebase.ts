@@ -1,14 +1,19 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging } from "firebase/messaging";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyClIGp770K73wGVDq5cA-5gzAMDj-9V-qw",
-    authDomain: "chatapplication-4933a.firebaseapp.com",
-    projectId: "chatapplication-4933a",
-    storageBucket: "chatapplication-4933a.firebasestorage.app",
-    messagingSenderId: "43166146240",
-    appId: "1:43166146240:web:91d4c845c095bfa592d725",
-};
+export function createFCMApp() {
+    // Fuck you, I have deleted the old test app
+    // and created a new one
+    const firebaseConfig = {
+        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
+        appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    };
 
-const firebase = initializeApp(firebaseConfig);
-export const messaging = getMessaging(firebase);
+    const firebase = initializeApp(firebaseConfig);
+    const messaging = getMessaging(firebase);
+    return messaging;
+}

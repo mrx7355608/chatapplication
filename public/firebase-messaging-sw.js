@@ -1,5 +1,5 @@
 // Give the service worker access to Firebase Messaging.
-// Note that you can only use Firebase Messaging here. Other Firebase libraries
+// NOTE: You can only use Firebase Messaging here. Other Firebase libraries
 // are not available in the service worker.
 // Replace 10.13.2 with latest version of the Firebase JS SDK.
 importScripts(
@@ -9,22 +9,17 @@ importScripts(
     "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js",
 );
 
-// Initialize the Firebase app in the service worker by passing in
-// your app's Firebase config object.
-// https://firebase.google.com/docs/web/setup#config-object
+// Initialize the Firebase app in the service worker
 firebase.initializeApp({
-    apiKey: "AIzaSyClIGp770K73wGVDq5cA-5gzAMDj-9V-qw",
-    authDomain: "chatapplication-4933a.firebaseapp.com",
-    projectId: "chatapplication-4933a",
-    storageBucket: "chatapplication-4933a.firebasestorage.app",
-    messagingSenderId: "43166146240",
-    appId: "1:43166146240:web:91d4c845c095bfa592d725",
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 });
 
-// Retrieve an instance of Firebase Messaging so that it can handle background
-// messages.
+// WARNING: Do not remove the line below otherwise you won't receive notifications
+// Retrieve an instance of Firebase Messaging so that it can handle both, foreground
+// and background messages
 const messaging = firebase.messaging();
-messaging.onMessage((payload) => {
-    console.log("Message received. ", payload);
-    // ...
-});
