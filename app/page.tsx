@@ -1,10 +1,11 @@
 import ConversationsList from "@/components/conversation-list";
+import Notifications from "@/components/notifications";
 
 export default async function Home() {
     return (
         <div className="flex">
             <ConversationsList />
-            <h1>Hello</h1>
+            <Notifications />
         </div>
     );
 }
