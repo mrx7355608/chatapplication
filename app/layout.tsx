@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import VerticalNavbar from "@/components/vertical-navbar";
-import Notifications from "@/components/notifications";
+import ToastProvider from "@/context/toast-context";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -31,8 +31,10 @@ export default function RootLayout({
                 className={`flex ${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <ClerkProvider>
-                    <VerticalNavbar />
-                    {children}
+                    <ToastProvider>
+                        <VerticalNavbar />
+                        {children}
+                    </ToastProvider>
                 </ClerkProvider>
             </body>
         </html>

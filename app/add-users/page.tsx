@@ -2,6 +2,7 @@
 
 import { sendFriendRequest } from "@/actions/friends";
 import { Spinner } from "@/components/spinner";
+import { useToast } from "@/hooks/useToast";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 
@@ -65,6 +66,7 @@ export default function SearchFriends() {
 function UserCard({ user }: { user: IUser }) {
     const [loading, setLoading] = useState(false);
     const sendRequestWithId = sendFriendRequest.bind(user.id);
+    const { addToast } = useToast();
 
     const handleOnClick = async () => {
         setLoading(true);
@@ -72,9 +74,9 @@ function UserCard({ user }: { user: IUser }) {
         setLoading(false);
 
         if (response.error) {
-            // TODO: show error toast
+            addToast("error", response.error);
         } else if (response.ok) {
-            // TODO: show succes toast
+            addToast("success", "Request send successfully");
         }
     };
 
