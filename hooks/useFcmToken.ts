@@ -3,8 +3,10 @@
 import { createFCMApp } from "@/lib/firebase";
 import { getToken, onMessage } from "firebase/messaging";
 import { useEffect } from "react";
+import { useToast } from "./useToast";
 
 export default function useFcmToken() {
+    const { addToast } = useToast();
     useEffect(() => {
         console.log("Requesting permission...");
 
@@ -33,8 +35,14 @@ export default function useFcmToken() {
 
             /* After fetching token, register a listener for notifications */
             onMessage(messaging, (payload) => {
-                // TODO: show a toast here when notification is received
-                console.log(payload.notification);
+                if (payload.notification) {
+                    addToast(
+                        "info",
+                        payload.notification.title || "Unknown Notification!",
+                        payload.notification.body ||
+                            "Don't panic it's just a bug in our app",
+                    );
+                }
             });
         });
     }, []);

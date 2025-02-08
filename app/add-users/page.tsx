@@ -72,9 +72,9 @@ function UserCard({ user }: { user: IUser }) {
         setLoading(true);
         const response = await sendRequestWithId(user.id);
         if (response.error) {
-            addToast("error", response.error);
+            addToast("error", "Error!", response.error);
         } else if (response.ok) {
-            addToast("success", "Request send successfully");
+            addToast("success", "Success!", "Request send successfully");
         }
         setLoading(false);
     };
