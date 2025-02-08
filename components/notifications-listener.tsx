@@ -1,8 +1,9 @@
 "use client";
-import useFcmToken from "@/hooks/useFcmToken";
-import React from "react";
 
-const Notifications = () => {
+import React from "react";
+import useFcmToken from "@/hooks/useFcmToken";
+
+const NotificationsListener = () => {
     // Fetches the fcm token and registers an eventListener to show notifications
     // while app is in foreground
     useFcmToken();
@@ -10,4 +11,4 @@ const Notifications = () => {
     return <></>;
 };
 
-export default Notifications;
+export default NotificationsListener;
