@@ -1,10 +1,10 @@
+"use client";
+
 import { createFCMApp } from "@/lib/firebase";
 import { getToken, onMessage } from "firebase/messaging";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function useFcmToken() {
-    const [token, setToken] = useState("");
-
     useEffect(() => {
         console.log("Requesting permission...");
 
@@ -16,21 +16,28 @@ export default function useFcmToken() {
 
             console.log("Notification permission granted.");
 
-            // Fetch FCM token for this device
+            /* Create FCM App to register a listener */
             const messaging = createFCMApp();
-            const token = await getToken(messaging, {
-                vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEYS,
-            });
-            setToken(token);
+
+            /* Check if token is in localstorage */
+            let token = localStorage.getItem("fcm-token");
+
+            /* If not, then fetch it from firebase */
+            if (!token) {
+                token = await getToken(messaging, {
+                    vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEYS,
+                });
+            }
 
             console.log({ token });
+
+            /* After fetching token, register a listener for notifications */
             onMessage(messaging, (payload) => {
+                // TODO: show a toast here when notification is received
                 console.log(payload.notification);
             });
-
-            // TODO: store this token in local storage
         });
     }, []);
 
-    return { fcmToken: token };
+    return null;
 }
