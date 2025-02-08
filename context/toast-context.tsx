@@ -29,7 +29,7 @@ const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
     return (
         <ToastContext.Provider value={{ addToast, removeToast }}>
             {children}
-            <div className="toast toast-end">
+            <div className="toast toast-start">
                 {toasts.map((toast) => (
                     <Toast
                         key={toast.id}
