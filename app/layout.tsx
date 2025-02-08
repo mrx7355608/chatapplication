@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import VerticalNavbar from "@/components/vertical-navbar";
 import ToastProvider from "@/context/toast-context";
+import NotificationsListener from "@/components/notifications-listener";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
                 <ClerkProvider>
                     <ToastProvider>
                         <VerticalNavbar />
+                        <NotificationsListener />
                         {children}
                     </ToastProvider>
                 </ClerkProvider>
