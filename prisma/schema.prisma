@@ -28,6 +28,7 @@ model User {
     friendRequestsReceived FriendRequests[] @relation("RequestReceived")
     SentMessages           Message[]
     conversations          Conversation[]   @relation(fields: [conversation_ids], references: [id])
+    FcmToken               FcmToken[]
 }
 
 enum OnlineStatus {
@@ -47,12 +48,6 @@ model FriendRequests {
     timestamp  DateTime @default(now())
 
     @@map("PendingRequests")
-}
-
-enum FriendRequestStatus {
-    PENDING
-    ACCEPTED
-    REJECTED
 }
 
 // =========================
@@ -84,4 +79,14 @@ model Message {
 
     sender       User         @relation(fields: [sender_id], references: [id])
     conversation Conversation @relation(fields: [conversation_id], references: [id])
+}
+
+// =====================
+//      FCM TOKENS
+// =====================
+model FcmToken {
+    id      String @id @default(auto()) @map("_id") @db.ObjectId
+    user_id String @db.ObjectId
+    token   String @unique()
+    user    User   @relation(fields: [user_id], references: [id])
 }

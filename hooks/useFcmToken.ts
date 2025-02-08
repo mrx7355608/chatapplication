@@ -7,45 +7,57 @@ import { useToast } from "./useToast";
 
 export default function useFcmToken() {
     const { addToast } = useToast();
+
     useEffect(() => {
-        console.log("Requesting permission...");
-
-        Notification.requestPermission().then(async (permission) => {
-            if (permission === "denied") {
-                console.warn("Notification permission denied!");
-                return;
-            }
-
-            console.log("Notification permission granted.");
-
-            /* Create FCM App to register a listener */
-            const messaging = createFCMApp();
-
-            /* Check if token is in localstorage */
-            let token = localStorage.getItem("fcm-token");
-
-            /* If not, then fetch it from firebase */
-            if (!token) {
-                token = await getToken(messaging, {
-                    vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEYS,
-                });
-            }
-
-            console.log({ token });
-
-            /* After fetching token, register a listener for notifications */
-            onMessage(messaging, (payload) => {
-                if (payload.notification) {
-                    addToast(
-                        "info",
-                        payload.notification.title || "Unknown Notification!",
-                        payload.notification.body ||
-                            "Don't panic it's just a bug in our app",
-                    );
-                }
-            });
-        });
+        getFcmToken().catch(console.error);
     }, []);
+
+    async function getFcmToken() {
+        const permission = await Notification.requestPermission();
+        console.log("Notification permission:", permission);
+
+        if (permission === "denied" || permission === "default") {
+            return;
+        }
+
+        /* Create FCM App */
+        const messaging = createFCMApp();
+
+        /* Fetch token from local storage */
+        let token = localStorage.getItem("fcm-token");
+
+        /* if token does not exist, sent a request to firebase */
+        if (!token) {
+            token = await getToken(messaging, {
+                vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEYS,
+            });
+
+            await saveTokenInDatabase(token);
+            localStorage.setItem("fcm-token", token);
+        }
+
+        /* Otherwise don't fetch token and register a notifications listener */
+        onMessage(messaging, ({ notification }) => {
+            if (notification) {
+                const title = notification.title || "Unknown notification";
+                const body = notification.body || "Unknown message";
+                addToast("info", title, body);
+            }
+        });
+    }
+
+    async function saveTokenInDatabase(token: string) {
+        console.log("Saving token in db...");
+        const response = await fetch("/api/save-token", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token }),
+        });
+        const result = await response.json();
+        console.log({ result });
+    }
 
     return null;
 }
