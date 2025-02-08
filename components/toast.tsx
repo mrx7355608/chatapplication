@@ -13,15 +13,21 @@ const iconMap = {
 
 const Toast: React.FC<IToast & { onClose: () => void }> = ({
     type,
+    title,
     message,
     onClose,
 }) => {
     const Icon = iconMap[type];
 
     return (
-        <div className={`alert alert-${type} shadow-lg border border-gray-200`}>
+        <div
+            className={`alert alert-${type} shadow-lg border border-gray-200 min-w-[400px]`}
+        >
             <Icon className="h-6 w-6" />
-            <span>{message}</span>
+            <div>
+                <h3 className="font-bold">{title}</h3>
+                <div className="text-sm">{message}</div>
+            </div>
             <button
                 onClick={onClose}
                 className="btn btn-circle btn-xs"

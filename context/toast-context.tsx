@@ -13,11 +13,14 @@ const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
     const [toasts, setToasts] = useState<IToast[]>([]);
 
-    const addToast = useCallback((type: ToastType, message: string) => {
-        const id = Date.now();
-        setToasts((prev) => [...prev, { id, type, message }]);
-        setTimeout(() => removeToast(id), 5000);
-    }, []);
+    const addToast = useCallback(
+        (type: ToastType, title: string, message: string) => {
+            const id = Date.now();
+            setToasts((prev) => [...prev, { id, type, title, message }]);
+            setTimeout(() => removeToast(id), 5000);
+        },
+        [],
+    );
 
     const removeToast = useCallback((id: number) => {
         setToasts((prev) => prev.filter((toast) => toast.id !== id));
