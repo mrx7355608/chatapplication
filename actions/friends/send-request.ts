@@ -20,8 +20,16 @@ export async function sendFriendRequest(receiverId: string) {
     // Check if user has already sent a friend request
     const existingRequest = await prismaClient.friendRequests.findFirst({
         where: {
-            sent_by_id: sender.id,
-            sent_to_id: receiverId,
+            OR: [
+                {
+                    sent_by_id: sender.id,
+                    sent_to_id: receiverId,
+                },
+                {
+                    sent_by_id: receiverId,
+                    sent_to_id: sender.id,
+                },
+            ],
         },
     });
     if (existingRequest) {
