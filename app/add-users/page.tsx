@@ -18,6 +18,7 @@ export default function SearchFriends() {
     const [query, setQuery] = useState("");
     const [user, setUser] = useState<IUser | null>(null);
     const [loading, setLoading] = useState(false);
+    const { addToast } = useToast();
 
     const searchUser = async (e: FormEvent) => {
         e.preventDefault();
@@ -27,11 +28,17 @@ export default function SearchFriends() {
             return;
         }
 
-        setLoading(true);
-        const response = await fetch(`/api/search-users?username=${query}`);
-        const result = await response.json();
-        setUser(result.data);
-        setLoading(false);
+        /* Fetch user */
+        try {
+            setLoading(true);
+            const response = await fetch(`/api/search-users?username=${query}`);
+            const result = await response.json();
+            setUser(result.data);
+        } catch (err: any) {
+            addToast("error", "Error", err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -57,7 +64,9 @@ export default function SearchFriends() {
             {user ? (
                 <UserCard user={user} />
             ) : (
-                <p className="text-center text-gray-500 mt-4">No users found</p>
+                <p className="text-center text-gray-500 mt-4">
+                    Nothing to show
+                </p>
             )}
         </div>
     );
@@ -71,11 +80,12 @@ function UserCard({ user }: { user: IUser }) {
     const handleOnClick = async () => {
         setLoading(true);
         const response = await sendRequestWithId(user.id);
-        if (response.error) {
-            addToast("error", "Error!", response.error);
-        } else if (response.ok) {
-            addToast("success", "Success!", "Request send successfully");
-        }
+        const { error, ok } = response;
+        addToast(
+            ok ? "success" : "error", // type
+            ok ? "Success!" : "Error!", // Title
+            error ? error : "Requet sent successfully", // Message
+        );
         setLoading(false);
     };
 
