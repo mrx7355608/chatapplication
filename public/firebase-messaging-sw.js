@@ -10,16 +10,20 @@ importScripts(
 );
 
 // Initialize the Firebase app in the service worker
-firebase.initializeApp({
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-});
+try {
+    fetch("/api/firebase-data", { credentials: "include" })
+        .then((resp) => resp.json())
+        .then((config) => {
+            firebase.initializeApp(config);
+            const messaging = firebase.messaging();
+            console.log("Firebase initialized");
 
-// WARNING: Do not remove the line below otherwise you won't receive notifications
-// Retrieve an instance of Firebase Messaging so that it can handle both, foreground
-// and background messages
-const messaging = firebase.messaging();
+            // WARNING: Do not remove the below function otherwise you won't receive notifications
+            messaging.onBackgroundMessage((payload) => {
+                console.log({ payload });
+            });
+        })
+        .catch(console.log);
+} catch (err) {
+    console.log(err);
+}
