@@ -1,14 +1,49 @@
-import type React from "react";
+"use client";
+
 import { MessageCircle, Settings, Clock, UserPlus } from "lucide-react";
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { SignedIn, useAuth, UserButton } from "@clerk/nextjs";
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 
 const VerticalNavbar = () => {
+    const { signOut } = useAuth();
+
+    const customLogout = async () => {
+        const oldToken = localStorage.getItem("fcm-token");
+        await fetch("/api/tokens", {
+            method: "DELETE",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                token: oldToken,
+            }),
+        });
+        localStorage.removeItem("fcm-token");
+
+        await signOut();
+    };
     return (
         <nav className="flex flex-col items-center w-20 h-screen py-8 space-y-6 bg-white border-r border-gray-200 shadow-sm">
             {/* User Profile */}
             <SignedIn>
-                <UserButton />
+                <UserButton
+                    appearance={{
+                        elements: {
+                            userButtonPopoverActionButton__signOut: "hidden",
+                        },
+                    }}
+                >
+                    <UserButton.MenuItems>
+                        <UserButton.Action label="manageAccount" />
+                        <UserButton.Action
+                            label="Sign out"
+                            labelIcon={<LogOut size={15} />}
+                            onClick={customLogout}
+                        />
+                    </UserButton.MenuItems>
+                </UserButton>
             </SignedIn>
 
             {/* Chats */}

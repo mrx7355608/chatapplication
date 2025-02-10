@@ -36,7 +36,7 @@ export default function useFcmToken() {
             localStorage.setItem("fcm-token", token);
         }
 
-        console.log({ token })
+        console.log({ token });
 
         /* Otherwise don't fetch token and register a notifications listener */
         onMessage(messaging, ({ notification }) => {
@@ -50,7 +50,7 @@ export default function useFcmToken() {
 
     async function saveTokenInDatabase(token: string) {
         console.log("Saving token in db...");
-        const response = await fetch("/api/save-token", {
+        const response = await fetch("/api/tokens", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
