@@ -17,7 +17,7 @@ const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
         (type: ToastType, title: string, message: string) => {
             const id = Date.now();
             setToasts((prev) => [...prev, { id, type, title, message }]);
-            setTimeout(() => removeToast(id), 5000);
+            setTimeout(() => removeToast(id), 8000);
         },
         [],
     );
