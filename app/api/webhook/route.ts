@@ -4,7 +4,7 @@ import { prismaClient } from "@/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
-    const SIGNING_SECRET = process.env.SIGNING_SECRET;
+    const SIGNING_SECRET = process.env.WEBHOOK_SIGNING_SECRET;
 
     if (!SIGNING_SECRET) {
         throw new Error(
@@ -51,6 +51,7 @@ export async function POST(req: Request) {
     // For this guide, log payload to console
 
     if (evt.type === "user.created") {
+        console.log("Creating user...");
         const { id, first_name, last_name, image_url, username } = evt.data;
         try {
             const user = await prismaClient.user.create({
@@ -58,6 +59,7 @@ export async function POST(req: Request) {
                     username: username || "Anonymous",
                     fullname: `${first_name} ${last_name}`,
                     image: image_url,
+                    clerk_id: id,
                 },
             });
 
@@ -70,6 +72,36 @@ export async function POST(req: Request) {
         } catch (err: any) {
             console.log(err.stack);
             return new Response("Webhook received", { status: 200 });
+        }
+    } else if (evt.type === "user.updated") {
+        console.log("Updating user...");
+        const { mongoId } = evt.data.private_metadata;
+        const { first_name, last_name, image_url } = evt.data;
+        try {
+            await prismaClient.user.update({
+                where: { id: mongoId as string },
+                data: {
+                    fullname: `${first_name} ${last_name}`,
+                    image: image_url,
+                },
+            });
+        } catch (err: any) {
+            console.log(err.stack);
+        }
+    } else if (evt.type === "user.deleted") {
+        console.log("Deleting user...");
+        try {
+            const { id } = evt.data;
+            const userToDelete = await prismaClient.user.findFirst({
+                where: { clerk_id: id },
+            });
+            if (userToDelete) {
+                await prismaClient.user.delete({
+                    where: { id: userToDelete.id },
+                });
+            }
+        } catch (err: any) {
+            console.log(err.stack);
         }
     }
 
