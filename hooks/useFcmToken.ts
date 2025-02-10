@@ -36,6 +36,8 @@ export default function useFcmToken() {
             localStorage.setItem("fcm-token", token);
         }
 
+        console.log({ token })
+
         /* Otherwise don't fetch token and register a notifications listener */
         onMessage(messaging, ({ notification }) => {
             if (notification) {

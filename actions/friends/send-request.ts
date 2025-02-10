@@ -2,6 +2,7 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import { prismaClient } from "@/lib/prisma";
+import { sendNotification } from "@/lib/notifications-service";
 
 export async function sendFriendRequest(receiverId: string) {
     const loggedInUser = await currentUser();
@@ -53,6 +54,18 @@ export async function sendFriendRequest(receiverId: string) {
             sent_to_id: receiverId,
         },
     });
+
+    /* Send notification to each device, the user is currently active */
+    const fcmTokens = await prismaClient.fcmToken.findMany({
+        where: { user_id: receiverId },
+    });
+    for (const tokenData of fcmTokens) {
+        const { token } = tokenData;
+        const title = "New friend request";
+        const body = `${sender.fullname} has sent you a friend request`;
+        const response = await sendNotification(token, title, body);
+        console.log({ response });
+    }
 
     return { ok: true };
 }
