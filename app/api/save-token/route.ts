@@ -9,12 +9,7 @@ export async function POST(req: NextRequest) {
     }
 
     /* Get mongoID of currently logged in user using his clerk id */
-    const user = await prismaClient.user.findFirst({
-        where: { clerk_id: loggedInUser.id },
-    });
-    if (!user) {
-        return Response.json({ error: "Account not found" }, { status: 404 });
-    }
+    const userMongoId = loggedInUser.privateMetadata.mongoId as string;
 
     const { token } = await req.json();
 
@@ -33,7 +28,7 @@ export async function POST(req: NextRequest) {
     try {
         await prismaClient.fcmToken.create({
             data: {
-                user_id: user.id,
+                user_id: userMongoId,
                 token: token,
             },
         });
