@@ -6,6 +6,7 @@ import {
 import { currentUser } from "@clerk/nextjs/server";
 import { prismaClient } from "../../lib/prisma";
 import { revalidatePath } from "next/cache";
+import { sendNotification } from "@/lib/notifications-service";
 
 // Mocks
 jest.mock("@clerk/nextjs/server", () => ({
@@ -16,6 +17,9 @@ jest.mock("@clerk/nextjs/server", () => ({
 jest.mock("../../lib/prisma");
 jest.mock("next/cache", () => ({
     revalidatePath: jest.fn(),
+}));
+jest.mock("../../lib/notifications-service", () => ({
+    sendNotification: jest.fn(),
 }));
 
 // Mock data
@@ -29,6 +33,9 @@ const mockUser = {
     username: "John Doe",
     my_friends_ids: [],
     iam_friends_with_ids: [friendID],
+    privateMetadata: {
+        mongoId: "some-mongo-id",
+    },
 };
 const mockUserWithNoFriends = {
     username: "John Doe",
@@ -47,20 +54,17 @@ describe("Server actions test", () => {
     describe("Send Friend Request", () => {
         it("should return error if sender is not found", async () => {
             // Mocks
-            (prismaClient.user.findFirst as jest.Mock).mockResolvedValue(null);
+            (currentUser as jest.Mock).mockResolvedValue(null);
 
             // Call server action
             const response = await sendFriendRequest(friendID);
 
             // Assert
-            expect(response.error).toBe("Account not found");
+            expect(response.error).toBe("Please login to continue");
         });
 
         it("should return error if user tries to send multiple requests to the same friend", async () => {
             // Mocks
-            (prismaClient.user.findFirst as jest.Mock).mockResolvedValue(
-                mockUser,
-            );
             (
                 prismaClient.friendRequests.findFirst as jest.Mock
             ).mockResolvedValueOnce(mockFriendRequest);
@@ -74,7 +78,7 @@ describe("Server actions test", () => {
 
         it("should return error if user tries to send request to an existing friend", async () => {
             // Mocks
-            (prismaClient.user.findFirst as jest.Mock).mockResolvedValue(
+            (prismaClient.user.findUnique as jest.Mock).mockResolvedValue(
                 mockUser,
             );
             (
@@ -91,12 +95,14 @@ describe("Server actions test", () => {
         });
         it("should send a friend request", async () => {
             // Mocks
-            (prismaClient.user.findFirst as jest.Mock).mockResolvedValue(
+            (prismaClient.user.findUnique as jest.Mock).mockResolvedValue(
                 mockUserWithNoFriends,
             );
             (prismaClient.friendRequests.create as jest.Mock).mockResolvedValue(
                 mockFriendRequest,
             );
+            (prismaClient.fcmToken.findMany as jest.Mock).mockResolvedValue([]);
+            (sendNotification as jest.Mock).mockResolvedValue(undefined);
 
             // Call server action
             const response = await sendFriendRequest(friendID);

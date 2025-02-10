@@ -5,17 +5,13 @@ import { prismaClient } from "@/lib/prisma";
 import { sendNotification } from "@/lib/notifications-service";
 
 export async function sendFriendRequest(receiverId: string) {
+    /* Check if user is authenticated */
     const loggedInUser = await currentUser();
-    if (!loggedInUser) {
-        return { error: "Not authenticated" };
-    }
 
-    // Get record of currently logged in user from MongoDB for his mongoID
-    const sender = await prismaClient.user.findFirst({
-        where: { clerk_id: loggedInUser.id },
-    });
-    if (!sender) {
-        return { error: "Account not found" };
+    /* Get current user's mongoId from clerk's private metadata */
+    const senderId = loggedInUser?.privateMetadata.mongoId as string;
+    if (!senderId) {
+        return { error: "Please login to continue" };
     }
 
     // Check if user has already sent a friend request
@@ -23,12 +19,12 @@ export async function sendFriendRequest(receiverId: string) {
         where: {
             OR: [
                 {
-                    sent_by_id: sender.id,
+                    sent_by_id: senderId,
                     sent_to_id: receiverId,
                 },
                 {
                     sent_by_id: receiverId,
-                    sent_to_id: sender.id,
+                    sent_to_id: senderId,
                 },
             ],
         },
@@ -40,9 +36,12 @@ export async function sendFriendRequest(receiverId: string) {
     }
 
     //  Check if the "receiver" is already a friend of current user
+    const sender = await prismaClient.user.findUnique({
+        where: { id: senderId },
+    });
     const isFriend =
-        sender.my_friends_ids.includes(receiverId) ||
-        sender.iam_friends_with_ids.includes(receiverId);
+        sender?.my_friends_ids.includes(receiverId) ||
+        sender?.iam_friends_with_ids.includes(receiverId);
     if (isFriend) {
         return { error: "Cannot send request to an existing friend" };
     }
@@ -50,7 +49,7 @@ export async function sendFriendRequest(receiverId: string) {
     // Make a FriendRequest record in db
     await prismaClient.friendRequests.create({
         data: {
-            sent_by_id: sender.id,
+            sent_by_id: senderId,
             sent_to_id: receiverId,
         },
     });
@@ -62,9 +61,8 @@ export async function sendFriendRequest(receiverId: string) {
     for (const tokenData of fcmTokens) {
         const { token } = tokenData;
         const title = "New friend request";
-        const body = `${sender.fullname} has sent you a friend request`;
-        const response = await sendNotification(token, title, body);
-        console.log({ response });
+        const body = `${sender?.fullname} has sent you a friend request`;
+        await sendNotification(token, title, body);
     }
 
     return { ok: true };
