@@ -43,32 +43,30 @@ export async function POST(req: Request) {
         });
     }
 
-    /* Handle webhook event */
     try {
-        switch (evt.type) {
-            case "user.created": {
-                console.log("Creating user...");
-                const user = await createUser(evt.data);
+        if (evt.type === "user.created") {
+            /* Handle create event */
+            console.log("Creating user...");
+            const user = await createUser(evt.data);
 
-                /* Add user's mongoId in clerk's user metadata */
-                const client = await clerkClient();
-                await client.users.updateUser(evt.data.id, {
-                    privateMetadata: {
-                        mongoId: user.id,
-                    },
-                });
-            }
-            case "user.updated": {
-                console.log("Updating user...");
-                const { mongoId } = evt.data.private_metadata;
-                await updateUser(mongoId as string, evt.data);
-            }
-            case "user.deleted": {
-                console.log("Deleting user...");
-                if (evt.data.id) {
-                    const userToDelete = await findUserByClerkId(evt.data.id);
-                    if (userToDelete) await deleteUser(userToDelete.id);
-                }
+            /* Add user's mongoId in clerk's user metadata */
+            const client = await clerkClient();
+            await client.users.updateUser(evt.data.id, {
+                privateMetadata: {
+                    mongoId: user.id,
+                },
+            });
+        } else if (evt.type === "user.updated") {
+            /* Handle update event */
+            console.log("Updating user...");
+            const { mongoId } = evt.data.private_metadata;
+            await updateUser(mongoId as string, evt.data);
+        } else if (evt.type === "user.deleted") {
+            /* Handle delete event */
+            console.log("Deleting user...");
+            if (evt.data.id) {
+                const userToDelete = await findUserByClerkId(evt.data.id);
+                if (userToDelete) await deleteUser(userToDelete.id);
             }
         }
     } catch (err: any) {

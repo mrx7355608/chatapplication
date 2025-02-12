@@ -1,6 +1,3 @@
-import { WebhookEvent } from "@clerk/nextjs/server";
-import { Webhook } from "svix";
-
 export function checkHeaders(req: Request) {
     const svix_id = req.headers.get("svix-id");
     const svix_timestamp = req.headers.get("svix-timestamp");
@@ -13,5 +10,3 @@ export function checkHeaders(req: Request) {
 
     return { svix_id, svix_signature, svix_timestamp };
 }
-
-export async function verifyWebhookPayload() {}
