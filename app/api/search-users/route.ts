@@ -1,7 +1,10 @@
 import { usersDB } from "@/data/users.data";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
+    await auth.protect();
+
     const usernameQuery = req.nextUrl.searchParams.get("username");
     if (!usernameQuery) {
         return Response.json(
