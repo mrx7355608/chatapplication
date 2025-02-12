@@ -15,6 +15,13 @@ const findById = async (id: string) => {
     return user;
 };
 
+const findByUsername = async (username: string) => {
+    const user = await prismaClient.user.findFirst({
+        where: { username },
+    });
+    return user;
+};
+
 const create = async (data: UserJSON) => {
     const { id, first_name, last_name, image_url, username } = data;
     const user = await prismaClient.user.create({
@@ -69,6 +76,7 @@ const addMeAsFriend = async (userId: string, friendId: string) => {
 };
 
 export const usersDB = {
+    findByUsername,
     findByClerkId,
     findById,
     create,

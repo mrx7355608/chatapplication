@@ -1,4 +1,4 @@
-import { prismaClient } from "@/lib/prisma";
+import { usersDB } from "@/data/users.data";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -10,9 +10,10 @@ export async function GET(req: NextRequest) {
         );
     }
 
-    const users = await prismaClient.user.findFirst({
-        where: { username: usernameQuery },
-    });
+    const user = await usersDB.findByUsername(usernameQuery);
+    if (!user) {
+        return Response.json({ data: null }, { status: 404 });
+    }
 
-    return Response.json({ data: users });
+    return Response.json({ data: user });
 }
