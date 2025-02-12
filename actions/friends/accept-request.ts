@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { prismaClient } from "@/lib/prisma";
+import { friendRequestsDB } from "@/data/friend-requests.data";
+import { usersDB } from "@/data/users.data";
 
 export async function acceptRequest(
     senderId: string,
@@ -9,30 +10,14 @@ export async function acceptRequest(
     friendRequestId: string,
 ) {
     // 1. Delete the pending request
-    await prismaClient.friendRequests.delete({
-        where: { id: friendRequestId },
-    });
+    await friendRequestsDB.remove(friendRequestId);
 
     try {
         // 2. Add the sender into my friends
-        await prismaClient.user.update({
-            where: { id: myId },
-            data: {
-                my_friends_ids: {
-                    push: senderId,
-                },
-            },
-        });
+        await usersDB.addFriend(myId, senderId);
 
         // 3. Add me in sender's friends
-        await prismaClient.user.update({
-            where: { id: senderId },
-            data: {
-                iam_friends_with_ids: {
-                    push: myId,
-                },
-            },
-        });
+        await usersDB.addMeAsFriend(senderId, myId);
 
         // 3. Revalidate the /pending-requests page to update the view
         revalidatePath("/pending-requests");

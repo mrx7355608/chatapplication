@@ -1,14 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { prismaClient } from "@/lib/prisma";
+import { friendRequestsDB } from "@/data/friend-requests.data";
 
-export async function rejectRequest(friendRequestId: string) {
+export async function rejectRequest(requestId: string) {
     try {
         // 1. Delete the pending request
-        await prismaClient.friendRequests.delete({
-            where: { id: friendRequestId },
-        });
+        await friendRequestsDB.remove(requestId);
 
         // 2. Revalidate the /pending-requests page to update the view
         revalidatePath("/pending-requests");

@@ -4,9 +4,11 @@ import {
     sendFriendRequest,
 } from "@/actions/friends";
 import { currentUser } from "@clerk/nextjs/server";
-import { prismaClient } from "../../lib/prisma";
 import { revalidatePath } from "next/cache";
 import { sendNotification } from "@/lib/notifications-service";
+import { friendRequestsDB } from "@/data/friend-requests.data";
+import { usersDB } from "@/data/users.data";
+import { fcmTokensDB } from "@/data/fcm-tokens.data";
 
 // Mocks
 jest.mock("@clerk/nextjs/server", () => ({
@@ -14,13 +16,15 @@ jest.mock("@clerk/nextjs/server", () => ({
         username: "John doe",
     }),
 }));
-jest.mock("../../lib/prisma");
 jest.mock("next/cache", () => ({
     revalidatePath: jest.fn(),
 }));
 jest.mock("../../lib/notifications-service", () => ({
     sendNotification: jest.fn(),
 }));
+jest.mock("../../data/users.data");
+jest.mock("../../data/fcm-tokens.data");
+jest.mock("../../data/friend-requests.data");
 
 // Mock data
 const mockFriendRequest = {
@@ -66,7 +70,7 @@ describe("Server actions test", () => {
         it("should return error if user tries to send multiple requests to the same friend", async () => {
             // Mocks
             (
-                prismaClient.friendRequests.findFirst as jest.Mock
+                friendRequestsDB.findBySenderReceiver as jest.Mock
             ).mockResolvedValueOnce(mockFriendRequest);
 
             // Call server action
@@ -78,11 +82,9 @@ describe("Server actions test", () => {
 
         it("should return error if user tries to send request to an existing friend", async () => {
             // Mocks
-            (prismaClient.user.findUnique as jest.Mock).mockResolvedValue(
-                mockUser,
-            );
+            (usersDB.findById as jest.Mock).mockResolvedValue(mockUser);
             (
-                prismaClient.friendRequests.findFirst as jest.Mock
+                friendRequestsDB.findBySenderReceiver as jest.Mock
             ).mockResolvedValueOnce(null);
 
             // Call server action
@@ -95,13 +97,13 @@ describe("Server actions test", () => {
         });
         it("should send a friend request", async () => {
             // Mocks
-            (prismaClient.user.findUnique as jest.Mock).mockResolvedValue(
+            (usersDB.findById as jest.Mock).mockResolvedValue(
                 mockUserWithNoFriends,
             );
-            (prismaClient.friendRequests.create as jest.Mock).mockResolvedValue(
+            (friendRequestsDB.create as jest.Mock).mockResolvedValue(
                 mockFriendRequest,
             );
-            (prismaClient.fcmToken.findMany as jest.Mock).mockResolvedValue([]);
+            (fcmTokensDB.find as jest.Mock).mockResolvedValue([]);
             (sendNotification as jest.Mock).mockResolvedValue(undefined);
 
             // Call server action
@@ -115,38 +117,27 @@ describe("Server actions test", () => {
     describe("Accept Friend Request", () => {
         it("should remove friend request and update both user's friend-lists", async () => {
             // Mocks
-            (prismaClient.friendRequests.delete as jest.Mock).mockReturnValue(
-                {},
-            );
-            (prismaClient.user.update as jest.Mock).mockReturnValue({});
+            (friendRequestsDB.remove as jest.Mock).mockReturnValue({});
+            (usersDB.update as jest.Mock).mockReturnValue({});
 
             // Call server action with mock IDs
             await acceptRequest("sender_123", "receiver_123", "request_123");
 
             // Assertions
             // Check if pending request is being deleted or not
-            expect(prismaClient.friendRequests.delete).toHaveBeenCalledWith({
-                where: { id: "request_123" },
-            });
+            expect(friendRequestsDB.remove).toHaveBeenCalledWith("request_123");
 
             // Check if friend-lists of both users are updated or not
-            expect(prismaClient.user.update).toHaveBeenCalledWith({
-                where: { id: "receiver_123" },
-                data: {
-                    my_friends_ids: {
-                        push: "sender_123",
-                    },
-                },
-            });
-            expect(prismaClient.user.update).toHaveBeenCalledWith({
-                where: { id: "sender_123" },
-                data: {
-                    iam_friends_with_ids: {
-                        push: "receiver_123",
-                    },
-                },
-            });
-            expect(prismaClient.user.update).toHaveBeenCalledTimes(2);
+            expect(usersDB.addFriend).toHaveBeenCalledWith(
+                "receiver_123",
+                "sender_123",
+            );
+            expect(usersDB.addMeAsFriend).toHaveBeenCalledWith(
+                "sender_123",
+                "receiver_123",
+            );
+            expect(usersDB.addFriend).toHaveBeenCalledTimes(1);
+            expect(usersDB.addMeAsFriend).toHaveBeenCalledTimes(1);
 
             // Check if the path is being revalidated or not
             expect(revalidatePath).toHaveBeenCalledTimes(1);
@@ -157,18 +148,14 @@ describe("Server actions test", () => {
     describe("Reject Friend Request", () => {
         it("should delete friend request when user rejects it", async () => {
             // Mocked necessary functions
-            (prismaClient.friendRequests.delete as jest.Mock).mockReturnValue(
-                {},
-            );
+            (friendRequestsDB.remove as jest.Mock).mockReturnValue({});
 
             // Call server action with mock request ID
             await rejectRequest("request_123");
 
             // Assert
             // Check if friend request is being deleted or not
-            expect(prismaClient.friendRequests.delete).toHaveBeenCalledWith({
-                where: { id: "request_123" },
-            });
+            expect(friendRequestsDB.remove).toHaveBeenCalledWith("request_123");
 
             // Check if the path is being revalidated or not
             expect(revalidatePath).toHaveBeenCalledTimes(1);
