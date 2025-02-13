@@ -7,6 +7,6 @@ export interface IMember {
 
 export interface IConversation {
     id: string;
-    type: "PRIVATE" | "GROUP";
-    members: IMember[];
+    user1: IMember;
+    user2: IMember;
 }

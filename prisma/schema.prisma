@@ -11,29 +11,24 @@ datasource db {
 //      USER
 // ===============
 model User {
-    id                   String       @id @default(auto()) @map("_id") @db.ObjectId
+    id                   String   @id @default(auto()) @map("_id") @db.ObjectId
     clerk_id             String
     username             String
     fullname             String
     image                String
-    status               OnlineStatus @default(OFFLINE)
-    my_friends_ids       String[]     @default([]) @db.ObjectId
-    iam_friends_with_ids String[]     @default([]) @db.ObjectId
-    conversation_ids     String[]     @default([]) @db.ObjectId
+    my_friends_ids       String[] @default([]) @db.ObjectId
+    iam_friends_with_ids String[] @default([]) @db.ObjectId
+    conversation_ids     String[] @default([]) @db.ObjectId
 
     // Prisma underlying tables stuff
-    my_friends             User[]           @relation("Friends", fields: [my_friends_ids], references: [id])
-    iam_friends_with       User[]           @relation("Friends", fields: [iam_friends_with_ids], references: [id])
-    friendRequestsSent     FriendRequests[] @relation("RequestSent")
-    friendRequestsReceived FriendRequests[] @relation("RequestReceived")
-    SentMessages           Message[]
-    conversations          Conversation[]   @relation(fields: [conversation_ids], references: [id])
-    FcmToken               FcmToken[]
-}
-
-enum OnlineStatus {
-    ONLINE
-    OFFLINE
+    my_friends                User[]           @relation("Friends", fields: [my_friends_ids], references: [id])
+    iam_friends_with          User[]           @relation("Friends", fields: [iam_friends_with_ids], references: [id])
+    friendRequestsSent        FriendRequests[] @relation("RequestSent")
+    friendRequestsReceived    FriendRequests[] @relation("RequestReceived")
+    SentMessages              Message[]
+    FcmToken                  FcmToken[]
+    as_sender_conversations   Conversation[]   @relation("Sender")
+    as_receiver_conversations Conversation[]   @relation("Receiver")
 }
 
 // =========================
@@ -54,17 +49,13 @@ model FriendRequests {
 //      CONVERSATIONS
 // =========================
 model Conversation {
-    id          String           @id @default(auto()) @map("_id") @db.ObjectId
-    type        ConversationType
-    members_ids String[]         @db.ObjectId
+    id       String @id @default(auto()) @map("_id") @db.ObjectId
+    user1_id String @db.ObjectId
+    user2_id String @db.ObjectId
+    user1    User   @relation("Sender", fields: [user1_id], references: [id])
+    user2    User   @relation("Receiver", fields: [user2_id], references: [id])
 
-    members  User[]    @relation(fields: [members_ids], references: [id])
     messages Message[]
-}
-
-enum ConversationType {
-    PRIVATE
-    GROUP
 }
 
 // =====================
