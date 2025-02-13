@@ -1,7 +1,7 @@
 "use client";
 import { useMessages } from "@ably/chat";
 import { IMember } from "@/types/conversation-types";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import ChatItemHeader from "./chat-header";
 import ChatItemMessageInput from "./chat-item-message-input";
 
@@ -12,11 +12,6 @@ type Message = {
 
 export default function ChatItem({ friend }: { friend: IMember }) {
     const [messagesList, setMessagesList] = useState<Message[]>([]);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messagesEndRef]);
 
     useMessages({
         listener: (event) => {
@@ -40,10 +35,9 @@ export default function ChatItem({ friend }: { friend: IMember }) {
                         <div className="chat-bubble">{message.text}</div>
                     </div>
                 ))}
-                <div ref={messagesEndRef} />
             </div>
 
-            {/* Message input */}
+            {/* Message input with Typing indicator */}
             <ChatItemMessageInput />
         </div>
     );

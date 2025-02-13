@@ -24,7 +24,12 @@ export default function ChatsContainer({ chats }: { chats: IConversation[] }) {
                 {activeChat !== null && (
                     <ChatRoomProvider
                         id={activeChat.id}
-                        options={{ presence: true, typing: true }}
+                        options={{
+                            presence: true,
+                            typing: {
+                                timeoutMs: 3000,
+                            },
+                        }}
                     >
                         <ChatItem
                             friend={
