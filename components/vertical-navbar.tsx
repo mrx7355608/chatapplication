@@ -10,6 +10,11 @@ const VerticalNavbar = () => {
 
     const customLogout = async () => {
         const oldToken = localStorage.getItem("fcm-token");
+        if (!oldToken) {
+            await signOut();
+            return;
+        }
+
         await fetch("/api/tokens", {
             method: "DELETE",
             credentials: "include",
