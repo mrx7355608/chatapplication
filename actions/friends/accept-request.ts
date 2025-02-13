@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { friendRequestsDB } from "@/data/friend-requests.data";
 import { usersDB } from "@/data/users.data";
+import { conversationsDB } from "@/data/conversations.data";
 
 export async function acceptRequest(
     senderId: string,
@@ -19,7 +20,10 @@ export async function acceptRequest(
         // 3. Add me in sender's friends
         await usersDB.addMeAsFriend(senderId, myId);
 
-        // 3. Revalidate the /pending-requests page to update the view
+        // 4. Create a conversation
+        await conversationsDB.create(myId, senderId);
+
+        // 5. Revalidate the /pending-requests page to update the view
         revalidatePath("/pending-requests");
     } catch (err: any) {
         console.log(err.stack);
