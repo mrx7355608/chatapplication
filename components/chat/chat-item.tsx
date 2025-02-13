@@ -1,89 +1,50 @@
 "use client";
-import Image from "next/image";
-import { Send } from "lucide-react";
-import { useMessages, usePresence } from "@ably/chat";
+import { useMessages } from "@ably/chat";
 import { IMember } from "@/types/conversation-types";
-import { useEffect, ChangeEvent, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
+import ChatItemHeader from "./chat-header";
+import ChatItemMessageInput from "./chat-item-message-input";
+
+type Message = {
+    clientId: string;
+    text: string;
+};
 
 export default function ChatItem({ friend }: { friend: IMember }) {
-    const [message, setMessage] = useState("");
-    const [messagesList, setMessagesList] = useState<string[]>([]);
+    const [messagesList, setMessagesList] = useState<Message[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, []);
+    }, [messagesEndRef]);
 
-    const { isPresent } = usePresence();
-    console.log(isPresent);
-
-    const { send } = useMessages({
+    useMessages({
         listener: (event) => {
-            setMessagesList([...messagesList, event.message.text]);
+            const { clientId, text } = event.message;
+            setMessagesList([...messagesList, { clientId, text }]);
         },
     });
-
-    /* Event handlers */
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { value } = e.target;
-        setMessage(value);
-    };
-
-    const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        send({ text: message });
-        setMessage("");
-    };
 
     return (
         <div className="flex flex-col h-screen bg-[#f0f2f5] w-full">
             {/* Chat header */}
-            <div className="bg-[#075e54] text-white p-4 flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-full bg-gray-300 flex-shrink-0">
-                    <Image
-                        src={friend.image}
-                        alt="user avatar"
-                        className="rounded-full"
-                        width={80}
-                        height={80}
-                    />
-                </div>
-                <div>
-                    <h2 className="font-semibold">{friend.fullname}</h2>
-                    <p className="text-xs">
-                        {isPresent ? "Online" : "Offline"}
-                    </p>
-                </div>
-            </div>
+            <ChatItemHeader friend={friend} />
 
             {/* Chat messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-2 w-full">
                 {messagesList.map((message, idx) => (
-                    <div key={idx} className="chat chat-end">
-                        <div className="chat-bubble">{message}</div>
+                    <div
+                        key={idx}
+                        className={`chat ${message.clientId === friend.username ? "chat-start" : "chat-end"}`}
+                    >
+                        <div className="chat-bubble">{message.text}</div>
                     </div>
                 ))}
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Chat input */}
-            <form onSubmit={handleSubmit} className="p-4 bg-[#f0f2f5] w-full">
-                <div className="flex items-center space-x-2">
-                    <input
-                        type="text"
-                        placeholder="Type a message"
-                        className="input input-bordered border w-full flex-1"
-                        value={message}
-                        onChange={handleChange}
-                    />
-                    <button
-                        type="submit"
-                        className="btn btn-success btn-square"
-                    >
-                        <Send size={20} />
-                    </button>
-                </div>
-            </form>
+            {/* Message input */}
+            <ChatItemMessageInput />
         </div>
     );
 }

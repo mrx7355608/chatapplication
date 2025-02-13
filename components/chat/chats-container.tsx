@@ -4,18 +4,14 @@ import ChatItem from "./chat-item";
 import ChatsList from "./chats-list";
 import { IConversation } from "@/types/conversation-types";
 import * as Ably from "ably";
-import {
-    ChatClient,
-    ChatClientProvider,
-    ChatRoomProvider,
-    RoomOptionsDefaults,
-} from "@ably/chat";
+import { ChatClient, ChatClientProvider, ChatRoomProvider } from "@ably/chat";
 import { useUser } from "@clerk/nextjs";
 
 export default function ChatsContainer({ chats }: { chats: IConversation[] }) {
     const [activeChat, setActiveChat] = useState<IConversation | null>(null);
     const { user } = useUser();
 
+    /* Connect to ably */
     const ably = new Ably.Realtime({
         authUrl: "http://localhost:3000/api/ably-authenticate",
     });
@@ -28,7 +24,7 @@ export default function ChatsContainer({ chats }: { chats: IConversation[] }) {
                 {activeChat !== null && (
                     <ChatRoomProvider
                         id={activeChat.id}
-                        options={RoomOptionsDefaults}
+                        options={{ presence: true, typing: true }}
                     >
                         <ChatItem
                             friend={
