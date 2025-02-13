@@ -8,19 +8,20 @@ import Image from "next/image";
 export default function ChatItemHeader({ friend }: { friend: IMember }) {
     const [isFriendOnline, setIsFriendOnline] = useState(false);
 
+    /* Subscribe to presence events */
     usePresence({
         enterWithData: "Online",
         leaveWithData: "Offline",
     });
 
+    /* Listen to the events, and update user's online status */
     usePresenceListener({
-        listener: (event) => {
-            const { clientId, data } = event;
-            setIsFriendOnline(
-                clientId === friend.username && data === "Online"
-                    ? true
-                    : false,
-            );
+        listener: ({ clientId, action }) => {
+            if (clientId === friend.username) {
+                setIsFriendOnline(
+                    action === "enter" || action === "present" ? true : false,
+                );
+            }
         },
     });
 

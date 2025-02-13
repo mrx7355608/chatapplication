@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatItem from "./chat-item";
 import ChatsList from "./chats-list";
 import { IConversation } from "@/types/conversation-types";
