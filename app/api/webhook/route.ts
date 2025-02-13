@@ -1,12 +1,7 @@
 import { Webhook } from "svix";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { clerkClient } from "@clerk/nextjs/server";
-import {
-    createUser,
-    deleteUser,
-    findUserByClerkId,
-    updateUser,
-} from "@/data/users.data";
+import { usersDB } from "@/data/users.data";
 import { checkHeaders } from "@/lib/webhook-utils";
 
 export async function POST(req: Request) {
@@ -47,7 +42,7 @@ export async function POST(req: Request) {
         if (evt.type === "user.created") {
             /* Handle create event */
             console.log("Creating user...");
-            const user = await createUser(evt.data);
+            const user = await usersDB.create(evt.data);
 
             /* Add user's mongoId in clerk's user metadata */
             const client = await clerkClient();
@@ -60,13 +55,13 @@ export async function POST(req: Request) {
             /* Handle update event */
             console.log("Updating user...");
             const { mongoId } = evt.data.private_metadata;
-            await updateUser(mongoId as string, evt.data);
+            await usersDB.update(mongoId as string, evt.data);
         } else if (evt.type === "user.deleted") {
             /* Handle delete event */
             console.log("Deleting user...");
             if (evt.data.id) {
-                const userToDelete = await findUserByClerkId(evt.data.id);
-                if (userToDelete) await deleteUser(userToDelete.id);
+                const userToDelete = await usersDB.findByClerkId(evt.data.id);
+                if (userToDelete) await usersDB.remove(userToDelete.id);
             }
         }
     } catch (err: any) {
