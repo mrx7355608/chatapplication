@@ -30,7 +30,7 @@ const VerticalNavbar = () => {
         await signOut();
     };
     return (
-        <nav className="flex flex-col items-center w-20 h-screen py-8 space-y-6 bg-white border-r border-gray-200 shadow-sm">
+        <nav className="flex flex-col items-center w-20 h-screen py-8 space-y-6 border-r border-gray-700 bg-base-200">
             {/* User Profile */}
             <SignedIn>
                 <UserButton
@@ -80,7 +80,7 @@ const NavButton = ({
     url: string;
 }) => (
     <Link href={url}>
-        <button className="p-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-colors duration-300 relative group">
+        <button className="btn btn-square btn-ghost">
             <Icon size={25} />
             <span className="absolute left-full ml-4 px-2 py-0 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm">
                 {label}

@@ -90,7 +90,7 @@ function UserCard({ user }: { user: IUser }) {
     };
 
     return (
-        <div className="flex items-center gap-3 border p-3 px-4 shadow-sm rounded-lg">
+        <div className="flex items-center gap-3 border p-4  rounded-lg bg-base-200 border-gray-800 shadow-lg">
             <Image
                 src={user.image}
                 width={60}
@@ -99,13 +99,13 @@ function UserCard({ user }: { user: IUser }) {
                 className="rounded-full object-fit"
             />
             <div>
-                <p className="font-medium">{user.fullname}</p>
-                <p className="text-sm text-gray-500">@{user.username}</p>
+                <p className="font-bold text-gray-200">{user.fullname}</p>
+                <p className="text-sm text-gray-400">@{user.username}</p>
             </div>
 
             {/* ADD FRIEND BUTTON */}
             <button
-                className="btn btn-outline btn-sm btn-ghost rounded-full ml-auto"
+                className="btn btn-info btn-sm rounded-full ml-auto"
                 onClick={handleOnClick}
                 disabled={loading}
             >
