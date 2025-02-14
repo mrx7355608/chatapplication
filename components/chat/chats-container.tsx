@@ -1,36 +1,32 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ChatItem from "./chat-item";
 import ChatsList from "./chats-list";
-import { IConversation } from "@/types/conversation-types";
-import * as Ably from "ably";
-import { ChatClient, ChatClientProvider, ChatRoomProvider } from "@ably/chat";
+import useAbly from "@/hooks/useAbly";
 import { useUser } from "@clerk/nextjs";
+import { IConversation } from "@/types/conversation-types";
+import { ChatClientProvider, ChatRoomProvider } from "@ably/chat";
 
 export default function ChatsContainer({ chats }: { chats: IConversation[] }) {
     const [activeChat, setActiveChat] = useState<IConversation | null>(null);
     const { user } = useUser();
 
     /* Connect to ably */
-    const ably = new Ably.Realtime({
-        authUrl: "http://localhost:3000/api/ably-authenticate",
-    });
-    const client = new ChatClient(ably);
+    const { client } = useAbly();
+
+    const roomOptions = {
+        presence: true,
+        typing: {
+            timeoutMs: 3000,
+        },
+    };
 
     return (
-        <ChatClientProvider client={client}>
-            <div className="flex w-full">
-                <ChatsList chats={chats} setActiveChat={setActiveChat} />
+        <div className="flex w-full">
+            <ChatsList chats={chats} setActiveChat={setActiveChat} />
+            <ChatClientProvider client={client}>
                 {activeChat !== null && (
-                    <ChatRoomProvider
-                        id={activeChat.id}
-                        options={{
-                            presence: true,
-                            typing: {
-                                timeoutMs: 3000,
-                            },
-                        }}
-                    >
+                    <ChatRoomProvider id={activeChat.id} options={roomOptions}>
                         <ChatItem
                             friend={
                                 activeChat.user1.username === user?.username
@@ -40,7 +36,7 @@ export default function ChatsContainer({ chats }: { chats: IConversation[] }) {
                         />
                     </ChatRoomProvider>
                 )}
-            </div>
-        </ChatClientProvider>
+            </ChatClientProvider>
+        </div>
     );
 }
