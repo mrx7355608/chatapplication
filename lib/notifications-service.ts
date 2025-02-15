@@ -1,20 +1,24 @@
 import { createFirebaseAdminApp } from "./firebase-server";
-import { getMessaging } from "firebase-admin/messaging";
+import { getMessaging, MulticastMessage } from "firebase-admin/messaging";
 
 export async function sendNotification(
-    token: string,
+    tokens: string[],
     title: string,
     body: string,
+    userImage: string,
 ) {
-    const payload = {
-        notification: {
+    const payload: MulticastMessage = {
+        tokens,
+        data: {
             title,
             body,
+            image: userImage,
+            url: "http://localhost:3000/pending-requests",
         },
-        token,
     };
 
     const app = createFirebaseAdminApp();
-    const response = await getMessaging(app).send(payload);
+    const response = await getMessaging(app).sendEachForMulticast(payload);
+    console.log(response.failureCount, " messages were failed");
     return response;
 }
