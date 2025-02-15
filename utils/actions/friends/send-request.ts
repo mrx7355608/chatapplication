@@ -2,9 +2,9 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import { sendNotification } from "@/lib/notifications-service";
-import { usersDB } from "@/data/users.data";
-import { friendRequestsDB } from "@/data/friend-requests.data";
-import { fcmTokensDB } from "@/data/fcm-tokens.data";
+import { usersDB } from "@/utils/data/users.data";
+import { friendRequestsDB } from "@/utils/data/friend-requests.data";
+import { fcmTokensDB } from "@/utils/data/fcm-tokens.data";
 
 export async function sendFriendRequest(receiverId: string) {
     /* Check if user is authenticated */

@@ -2,9 +2,9 @@
 import { useState } from "react";
 import ChatItem from "./chat-item";
 import ChatsList from "./chats-list";
-import useAbly from "@/hooks/useAbly";
+import useAbly from "@/utils/hooks/useAbly";
 import { useUser } from "@clerk/nextjs";
-import { IConversation } from "@/types/conversation-types";
+import { IConversation } from "@/utils/types/conversation-types";
 import { ChatClientProvider, ChatRoomProvider } from "@ably/chat";
 
 export default function ChatsContainer({ chats }: { chats: IConversation[] }) {

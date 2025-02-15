@@ -1,5 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { conversationsDB } from "@/data/conversations.data";
+import { conversationsDB } from "@/utils/data/conversations.data";
 import ChatHandler from "@/components/chat/chat-handler";
 
 export default async function Home() {

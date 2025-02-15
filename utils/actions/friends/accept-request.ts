@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { friendRequestsDB } from "@/data/friend-requests.data";
-import { usersDB } from "@/data/users.data";
-import { conversationsDB } from "@/data/conversations.data";
+import { friendRequestsDB } from "@/utils/data/friend-requests.data";
+import { usersDB } from "@/utils/data/users.data";
+import { conversationsDB } from "@/utils/data/conversations.data";
 
 export async function acceptRequest(
     senderId: string,

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { acceptRequest, rejectRequest } from "@/actions/friends";
+import { acceptRequest, rejectRequest } from "@/utils/actions/friends";
 import { useState } from "react";
 import { Spinner } from "./spinner";
 

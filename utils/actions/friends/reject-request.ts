@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { friendRequestsDB } from "@/data/friend-requests.data";
+import { friendRequestsDB } from "@/utils/data/friend-requests.data";
 
 export async function rejectRequest(requestId: string) {
     try {
