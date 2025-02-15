@@ -41,12 +41,10 @@ export async function sendFriendRequest(receiverId: string) {
 
     /* Send notification to each device, the user is currently active */
     const fcmTokens = await fcmTokensDB.find(receiverId);
-    for (const tokenData of fcmTokens) {
-        const { token } = tokenData;
-        const title = "New friend request";
-        const body = `${sender?.fullname} has sent you a friend request`;
-        await sendNotification(token, title, body);
-    }
+    const tokens = fcmTokens.flatMap((f) => f.token);
+    const title = "New friend request";
+    const body = `${sender?.fullname} has sent you a friend request`;
+    await sendNotification(tokens, title, body, sender!.image);
 
     return { ok: true };
 }
