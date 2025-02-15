@@ -26,8 +26,9 @@ export default function useFcmToken() {
         const token = await getDeviceToken(messaging);
         console.log({ token });
 
-        /* Otherwise don't fetch token and register a notifications listener */
+        /* Register a notifications listener */
         onMessage(messaging, ({ notification }) => {
+            console.log(notification);
             if (notification) {
                 const title = notification.title || "Unknown notification";
                 const body = notification.body || "Unknown message";
@@ -38,7 +39,7 @@ export default function useFcmToken() {
 
     async function saveTokenInDatabase(token: string) {
         console.log("Saving token in db...");
-        const response = await fetch("/api/tokens", {
+        const response = await fetch("/api/save-tokens", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

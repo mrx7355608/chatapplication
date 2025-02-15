@@ -1,4 +1,4 @@
-import { usersDB } from "@/data/users.data";
+import { usersDB } from "@/utils/data/users.data";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 

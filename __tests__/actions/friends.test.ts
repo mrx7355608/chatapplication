@@ -2,13 +2,13 @@ import {
     acceptRequest,
     rejectRequest,
     sendFriendRequest,
-} from "@/actions/friends";
+} from "@/utils/actions/friends";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { sendNotification } from "@/lib/notifications-service";
-import { friendRequestsDB } from "@/data/friend-requests.data";
-import { usersDB } from "@/data/users.data";
-import { fcmTokensDB } from "@/data/fcm-tokens.data";
+import { friendRequestsDB } from "@/utils/data/friend-requests.data";
+import { usersDB } from "@/utils/data/users.data";
+import { fcmTokensDB } from "@/utils/data/fcm-tokens.data";
 
 // Mocks
 jest.mock("@clerk/nextjs/server", () => ({

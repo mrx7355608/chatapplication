@@ -1,8 +1,8 @@
 "use client";
 
-import { sendFriendRequest } from "@/actions/friends";
+import { sendFriendRequest } from "@/utils/actions/friends";
 import { Spinner } from "@/components/spinner";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@/utils/hooks/useToast";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 

@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import VerticalNavbar from "@/components/vertical-navbar";
-import ToastProvider from "@/context/toast-context";
+import ToastProvider from "@/utils/context/toast-context";
 import NotificationsListener from "@/components/notifications-listener";
 
 const geistSans = Geist({

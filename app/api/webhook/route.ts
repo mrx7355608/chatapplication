@@ -1,7 +1,7 @@
 import { Webhook } from "svix";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { clerkClient } from "@clerk/nextjs/server";
-import { usersDB } from "@/data/users.data";
+import { usersDB } from "@/utils/data/users.data";
 import { checkHeaders } from "@/lib/webhook-utils";
 
 export async function POST(req: Request) {
@@ -42,6 +42,7 @@ export async function POST(req: Request) {
         if (evt.type === "user.created") {
             /* Handle create event */
             console.log("Creating user...");
+            console.log(evt.data);
             const user = await usersDB.create(evt.data);
 
             /* Add user's mongoId in clerk's user metadata */
