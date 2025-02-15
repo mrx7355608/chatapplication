@@ -1,44 +1,50 @@
 "use client";
 
 import { createFCMApp } from "@/lib/firebase";
-import { getToken, Messaging, onMessage } from "firebase/messaging";
-import { useEffect } from "react";
-import { useToast } from "./useToast";
+import { getToken } from "firebase/messaging";
+import { useEffect, useState } from "react";
+import useNotificationsPermission from "./useNotificationPermission";
 
 export default function useFcmToken() {
-    const { addToast } = useToast();
+    const { permission } = useNotificationsPermission();
+    const [fcmToken, setFcmToken] = useState<string | undefined>(undefined);
 
     useEffect(() => {
-        getFcmToken().catch((err) => console.log(err.message, err.stack));
-    }, []);
+        if (permission === "granted") {
+            getFcmToken();
+        }
+    }, [permission]);
 
     async function getFcmToken() {
-        /* Return if notifications are not allowed */
-        if (!(await isNotificationAllowed())) {
+        const messaging = createFCMApp();
+
+        /* Get previously stored token from local storage */
+        let token = localStorage.getItem("fcm-token");
+        if (token) {
+            setFcmToken(token);
             return;
         }
 
-        /* Create FCM app */
-        const messaging = createFCMApp();
-
-        /* Get token */
-        console.log("Trying to fetch token");
-        const token = await getDeviceToken(messaging);
-        console.log({ token });
-
-        /* Register a notifications listener */
-        onMessage(messaging, ({ notification }) => {
-            console.log(notification);
-            if (notification) {
-                const title = notification.title || "Unknown notification";
-                const body = notification.body || "Unknown message";
-                addToast("info", title, body);
-            }
+        /* Otherwise, get token from firebase */
+        console.log("--- Fetching token from firebase ---");
+        token = await getToken(messaging, {
+            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEYS,
         });
+        if (!token) {
+            console.error("Unable to fetch FCM token");
+            return;
+        }
+
+        /* Save token in mongodb */
+        console.log("--- Saving Token in Database ---");
+        await saveTokenInDatabase(token);
+
+        /* Save token in local storage */
+        localStorage.setItem("fcm-token", token);
+        setFcmToken(token);
     }
 
     async function saveTokenInDatabase(token: string) {
-        console.log("Saving token in db...");
         const response = await fetch("/api/save-tokens", {
             method: "POST",
             headers: {
@@ -50,34 +56,5 @@ export default function useFcmToken() {
         console.log({ result });
     }
 
-    async function isNotificationAllowed() {
-        const permission = await Notification.requestPermission();
-        console.log("Notification permission:", permission);
-        return permission === "granted" ? true : false;
-    }
-
-    async function getDeviceToken(messaging: Messaging) {
-        try {
-            /* If token already exists in localStorage, then return */
-            let token = localStorage.getItem("fcm-token");
-            if (token) {
-                return token;
-            }
-
-            /* Get token from firebase */
-            token = await getToken(messaging, {
-                vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEYS,
-            });
-
-            /* Save token in browser and database */
-            await saveTokenInDatabase(token);
-            localStorage.setItem("fcm-token", token);
-
-            return token;
-        } catch (err: any) {
-            console.log(err);
-        }
-    }
-
-    return null;
+    return { fcmToken };
 }
