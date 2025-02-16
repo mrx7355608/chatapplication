@@ -9,15 +9,12 @@ export async function POST(req: NextRequest) {
         return Response.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    /* Get mongoID of currently logged in user */
-    const userMongoId = loggedInUser.privateMetadata.mongoId as string;
-
     try {
         const { token } = await req.json();
 
         /* Check if token already exists */
         const existingToken = await prismaClient.fcmToken.findFirst({
-            where: { token, user_id: userMongoId },
+            where: { token, user_clerk_id: loggedInUser.id },
         });
         if (existingToken) {
             return Response.json(
@@ -29,12 +26,12 @@ export async function POST(req: NextRequest) {
         /* Save token */
         await prismaClient.fcmToken.create({
             data: {
-                user_id: userMongoId,
+                user_clerk_id: loggedInUser.id,
                 token: token,
             },
         });
-    } catch (err: any) {
-        console.log(err.stack);
+    } catch (err) {
+        console.log((err as Error).stack);
         return Response.json(
             { error: "Something went wrong!" },
             { status: 500 },

@@ -26,7 +26,6 @@ model User {
     friendRequestsSent        FriendRequests[] @relation("RequestSent")
     friendRequestsReceived    FriendRequests[] @relation("RequestReceived")
     SentMessages              Message[]
-    FcmToken                  FcmToken[]
     as_sender_conversations   Conversation[]   @relation("Sender")
     as_receiver_conversations Conversation[]   @relation("Receiver")
 }
@@ -76,8 +75,7 @@ model Message {
 //      FCM TOKENS
 // =====================
 model FcmToken {
-    id      String @id @default(auto()) @map("_id") @db.ObjectId
-    user_id String @db.ObjectId
-    token   String @unique()
-    user    User   @relation(fields: [user_id], references: [id])
+    id            String @id @default(auto()) @map("_id") @db.ObjectId
+    user_clerk_id String
+    token         String @unique()
 }
