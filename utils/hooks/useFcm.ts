@@ -13,11 +13,10 @@ export default function useFcm() {
             return;
         }
         const messaging = createFCMApp();
-        onMessage(messaging, ({ notification }) => {
-            console.log(notification);
-            if (notification) {
-                const title = notification.title || "Unknown notification";
-                const body = notification.body || "Unknown message";
+        onMessage(messaging, ({ data }) => {
+            if (data) {
+                const title = data.title || "Unknown notification";
+                const body = data.body || "Unknown message";
                 addToast("info", title, body);
             }
         });
