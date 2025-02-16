@@ -1,16 +1,25 @@
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { conversationsDB } from "@/utils/data/conversations.data";
 import ChatHandler from "@/components/chat/chat-handler";
+import { usersDB } from "@/utils/data/users.data";
 
 export default async function Home() {
-    const user = await currentUser();
-    const userMongoId = user?.privateMetadata.mongoId as string;
+    const { userId } = await auth();
 
-    if (!userMongoId) {
+    if (!userId) {
         return <p>Not authenticated</p>;
     }
 
-    const conversations = await conversationsDB.find(userMongoId);
+    /*
+     * Here, User is fetched from my database using his clerk id because, when a new user
+     * signs up, his mongoId is not yet present in the "privateMetadata" object. Because
+     * clerk initiates a webhook for "user.created" event on signup which adds user to my
+     * database and then I add mongoId in the "privateMetadata" of clerk's user
+     *
+     * See: app/api/webhook/route.ts
+     */
+    const user = await usersDB.findByClerkId(userId);
+    const conversations = await conversationsDB.find(user!.clerk_id);
 
     return <ChatHandler chats={conversations} />;
 }
