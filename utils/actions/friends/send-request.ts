@@ -40,7 +40,8 @@ export async function sendFriendRequest(receiverId: string) {
     await friendRequestsDB.create(senderMongoId, receiverId);
 
     /* Send notification to each device, the user is currently active */
-    const fcmTokens = await fcmTokensDB.find(receiverId);
+    const receiver = await usersDB.findById(receiverId);
+    const fcmTokens = await fcmTokensDB.find(receiver!.clerk_id);
     const tokens = fcmTokens.flatMap((f) => f.token);
     const title = "New friend request";
     const body = `${sender?.fullname} has sent you a friend request`;
