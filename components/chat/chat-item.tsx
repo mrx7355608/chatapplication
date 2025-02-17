@@ -13,7 +13,7 @@ type Message = {
 export default function ChatItem({ friend }: { friend: IMember }) {
     const [messagesList, setMessagesList] = useState<Message[]>([]);
 
-    const { attach, detach, roomStatus } = useRoom();
+    console.log("Rendered chat with Friend:", friend.username);
 
     useMessages({
         listener: (event) => {
@@ -21,14 +21,6 @@ export default function ChatItem({ friend }: { friend: IMember }) {
             setMessagesList([...messagesList, { clientId, text }]);
         },
     });
-
-    useEffect(() => {
-        console.log(roomStatus);
-        if (roomStatus === "attached") {
-            console.log("Connecting...", roomStatus);
-            attach();
-        }
-    }, [roomStatus]);
 
     return (
         <div className="flex flex-col h-screen bg-[#f0f2f5] w-full">

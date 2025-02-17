@@ -9,19 +9,19 @@ export default function ChatItemHeader({ friend }: { friend: IMember }) {
     const [isFriendOnline, setIsFriendOnline] = useState(false);
 
     /* Subscribe to presence events */
-    usePresence();
+    // usePresence();
 
     /* Listen to the events, and update user's online status */
-    usePresenceListener({
-        onRoomStatusChange: (e) => console.log("Room status:", e),
-        listener: ({ clientId, action }) => {
-            if (clientId === friend.username) {
-                setIsFriendOnline(
-                    action === "enter" || action === "present" ? true : false,
-                );
-            }
-        },
-    });
+    // usePresenceListener({
+    //     onRoomStatusChange: (e) => console.log("Room status:", e),
+    //     listener: ({ clientId, action }) => {
+    //         if (clientId === friend.username) {
+    //             setIsFriendOnline(
+    //                 action === "enter" || action === "present" ? true : false,
+    //             );
+    //         }
+    //     },
+    // });
 
     return (
         <div className="bg-[#075e54] text-white p-4 flex items-center space-x-4">

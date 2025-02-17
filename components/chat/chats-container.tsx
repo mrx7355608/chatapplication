@@ -1,43 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useRef } from "react";
 import ChatItem from "./chat-item";
 import ChatsList from "./chats-list";
 import useAbly from "@/utils/hooks/useAbly";
 import { useUser } from "@clerk/nextjs";
 import { IConversation } from "@/utils/types/conversation-types";
-import { ChatClientProvider, ChatRoomProvider } from "@ably/chat";
+import {
+    ChatClientProvider,
+    ChatRoomProvider,
+    RoomOptionsDefaults,
+} from "@ably/chat";
 
 export default function ChatsContainer({ chats }: { chats: IConversation[] }) {
-    const [activeChat, setActiveChat] = useState<IConversation | null>(null);
     const { user } = useUser();
 
     /* Connect to ably */
     const { client } = useAbly();
 
-    const roomOptions = {
-        presence: true,
-        typing: {
-            timeoutMs: 3000,
-        },
-        attach: false,
-    };
+    // const roomOptions = {
+    //     presence: true,
+    //     typing: {
+    //         timeoutMs: 3000,
+    //     },
+    //     attach: false,
+    // };
 
     return (
         <div className="flex w-full">
             <ChatClientProvider client={client}>
-                <ChatsList chats={chats} setActiveChat={setActiveChat} />
-                {activeChat && (
-                    <ChatRoomProvider id={activeChat.id} options={roomOptions}>
-                        <ChatItem
-                            friend={
-                                activeChat.user1.username === user?.username
-                                    ? activeChat.user2
-                                    : activeChat.user1
-                            }
-                        />
-                    </ChatRoomProvider>
-                )}
+                <ChatsList chats={chats} />
+                {chats.map((chat) => {
+                    return (
+                        <ChatRoomProvider
+                            id={chat.id}
+                            key={chat.id}
+                            options={RoomOptionsDefaults}
+                        >
+                            <ChatItem friend={chat.user2} />
+                        </ChatRoomProvider>
+                    );
+                })}
             </ChatClientProvider>
         </div>
     );
