@@ -1,7 +1,7 @@
 "use client";
-import { useMessages } from "@ably/chat";
-import { IMember } from "@/types/conversation-types";
-import { useState } from "react";
+import { useMessages, useRoom } from "@ably/chat";
+import { IMember } from "@/utils/types/conversation-types";
+import { useEffect, useState } from "react";
 import ChatItemHeader from "./chat-header";
 import ChatItemMessageInput from "./chat-item-message-input";
 
@@ -13,12 +13,22 @@ type Message = {
 export default function ChatItem({ friend }: { friend: IMember }) {
     const [messagesList, setMessagesList] = useState<Message[]>([]);
 
+    const { attach, detach, roomStatus } = useRoom();
+
     useMessages({
         listener: (event) => {
             const { clientId, text } = event.message;
             setMessagesList([...messagesList, { clientId, text }]);
         },
     });
+
+    useEffect(() => {
+        console.log(roomStatus);
+        if (roomStatus === "attached") {
+            console.log("Connecting...", roomStatus);
+            attach();
+        }
+    }, [roomStatus]);
 
     return (
         <div className="flex flex-col h-screen bg-[#f0f2f5] w-full">

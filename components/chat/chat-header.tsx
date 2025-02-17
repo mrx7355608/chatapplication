@@ -2,20 +2,18 @@
 
 import { useState } from "react";
 import { usePresence, usePresenceListener } from "@ably/chat";
-import { IMember } from "@/types/conversation-types";
+import { IMember } from "@/utils/types/conversation-types";
 import Image from "next/image";
 
 export default function ChatItemHeader({ friend }: { friend: IMember }) {
     const [isFriendOnline, setIsFriendOnline] = useState(false);
 
     /* Subscribe to presence events */
-    usePresence({
-        enterWithData: "Online",
-        leaveWithData: "Offline",
-    });
+    usePresence();
 
     /* Listen to the events, and update user's online status */
     usePresenceListener({
+        onRoomStatusChange: (e) => console.log("Room status:", e),
         listener: ({ clientId, action }) => {
             if (clientId === friend.username) {
                 setIsFriendOnline(

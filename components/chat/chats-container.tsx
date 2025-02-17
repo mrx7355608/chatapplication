@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import ChatItem from "./chat-item";
 import ChatsList from "./chats-list";
@@ -19,13 +20,14 @@ export default function ChatsContainer({ chats }: { chats: IConversation[] }) {
         typing: {
             timeoutMs: 3000,
         },
+        attach: false,
     };
 
     return (
         <div className="flex w-full">
-            <ChatsList chats={chats} setActiveChat={setActiveChat} />
             <ChatClientProvider client={client}>
-                {activeChat !== null && (
+                <ChatsList chats={chats} setActiveChat={setActiveChat} />
+                {activeChat && (
                     <ChatRoomProvider id={activeChat.id} options={roomOptions}>
                         <ChatItem
                             friend={

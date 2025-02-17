@@ -1,10 +1,14 @@
+"use client";
+
 import * as Ably from "ably";
 import { ChatClient } from "@ably/chat";
 import { useEffect } from "react";
 import { useToast } from "./useToast";
+import { useUser } from "@clerk/nextjs";
 
 export default function useAbly() {
     const { addToast } = useToast();
+    const { user } = useUser();
 
     /* Create ably and chat client instances */
     const ably = new Ably.Realtime({
