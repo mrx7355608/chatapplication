@@ -1,20 +1,15 @@
 "use client";
 
-import * as Ably from "ably";
-import { ChatClient } from "@ably/chat";
 import { useEffect } from "react";
 import { useToast } from "./useToast";
-import { useUser } from "@clerk/nextjs";
+import { connectAbly } from "@/lib/connect-ably";
+import { ChatClient } from "@ably/chat";
 
-export default function useAbly() {
+const ably = connectAbly();
+const client = new ChatClient(ably);
+
+export default function useConnectionManager() {
     const { addToast } = useToast();
-    const { user } = useUser();
-
-    /* Create ably and chat client instances */
-    const ably = new Ably.Realtime({
-        authUrl: "api/ably-authenticate",
-    });
-    const client = new ChatClient(ably);
 
     /* Connect to ably server and show connection status toasts */
     useEffect(() => {
@@ -37,6 +32,5 @@ export default function useAbly() {
         addToast("error", "Disconnected", errorMessage);
     }
 
-    /* Return chat client */
     return { client };
 }

@@ -1,27 +1,49 @@
 "use client";
 
-import { useState } from "react";
-import { usePresence, usePresenceListener } from "@ably/chat";
+import { useEffect, useState } from "react";
+import {
+    RoomOptionsDefaults,
+    usePresence,
+    usePresenceListener,
+    useRoom,
+} from "@ably/chat";
 import { IMember } from "@/utils/types/conversation-types";
 import Image from "next/image";
+import useConnectionManager from "@/utils/hooks/useConnection";
 
 export default function ChatItemHeader({ friend }: { friend: IMember }) {
     const [isFriendOnline, setIsFriendOnline] = useState(false);
+    const { client } = useConnectionManager();
+    const { roomId } = useRoom();
 
+    const { room } = useRoom();
+    useEffect(() => {
+        client.rooms
+            .get(roomId, {
+                presence: { enter: true },
+                typing: { timeoutMs: 2000 },
+            })
+            .then(async (room) => {
+                const onlineMembers = await room.presence.get();
+                const friendOnlineStatus = onlineMembers.filter(
+                    (m) => m.clientId === friend.username
+                )[0];
+                setIsFriendOnline(friendOnlineStatus ? true : false);
+            });
+    }, []);
+
+    // use
     /* Subscribe to presence events */
     // usePresence();
 
     /* Listen to the events, and update user's online status */
-    // usePresenceListener({
-    //     onRoomStatusChange: (e) => console.log("Room status:", e),
-    //     listener: ({ clientId, action }) => {
-    //         if (clientId === friend.username) {
-    //             setIsFriendOnline(
-    //                 action === "enter" || action === "present" ? true : false,
-    //             );
-    //         }
-    //     },
-    // });
+    usePresenceListener({
+        listener: ({ clientId, action }) => {
+            if (clientId === friend.username) {
+                setIsFriendOnline(action === "leave" ? false : true);
+            }
+        },
+    });
 
     return (
         <div className="bg-[#075e54] text-white p-4 flex items-center space-x-4">

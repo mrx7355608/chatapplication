@@ -3,12 +3,14 @@ import Image from "next/image";
 import { Search } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { IConversation } from "@/utils/types/conversation-types";
+import { Dispatch, SetStateAction } from "react";
 
 type Props = {
     chats: IConversation[];
+    setActiveChat: Dispatch<SetStateAction<IConversation | null>>;
 };
 
-export default function ChatsList({ chats }: Props) {
+export default function ChatsList({ chats, setActiveChat }: Props) {
     return (
         <div className="w-[350px] h-screen flex flex-col bg-transparent border-r border-gray-700">
             {/* SEARCH BAR */}
@@ -20,7 +22,11 @@ export default function ChatsList({ chats }: Props) {
             {/* LIST */}
             <div className="flex-1 overflow-y-auto">
                 {chats.map((chat) => (
-                    <ChatUser key={chat.id} chat={chat} />
+                    <ChatUser
+                        key={chat.id}
+                        chat={chat}
+                        setActiveChat={() => setActiveChat(chat)}
+                    />
                 ))}
             </div>
         </div>
@@ -29,15 +35,19 @@ export default function ChatsList({ chats }: Props) {
 
 type ChatUserProps = {
     chat: IConversation;
+    setActiveChat: () => void;
 };
 
-function ChatUser({ chat }: ChatUserProps) {
+function ChatUser({ chat, setActiveChat }: ChatUserProps) {
     const { user } = useUser();
     const { user1, user2 } = chat;
     const friend = user1.username === user?.username ? user2 : user1;
 
     return (
-        <div className="flex items-center p-3 hover:bg-gray-800 cursor-pointer">
+        <div
+            className="flex items-center p-3 hover:bg-gray-800 cursor-pointer"
+            onClick={setActiveChat}
+        >
             <Image
                 src={friend.image}
                 alt={friend.username + " avatar"}

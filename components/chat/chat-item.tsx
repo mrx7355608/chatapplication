@@ -1,5 +1,5 @@
 "use client";
-import { useMessages, useRoom } from "@ably/chat";
+import { useMessages } from "@ably/chat";
 import { IMember } from "@/utils/types/conversation-types";
 import { useEffect, useState } from "react";
 import ChatItemHeader from "./chat-header";
@@ -13,7 +13,9 @@ type Message = {
 export default function ChatItem({ friend }: { friend: IMember }) {
     const [messagesList, setMessagesList] = useState<Message[]>([]);
 
-    console.log("Rendered chat with Friend:", friend.username);
+    useEffect(() => {
+        console.log("Rendered chat with Friend:", friend.username);
+    }, []);
 
     useMessages({
         listener: (event) => {
@@ -23,7 +25,7 @@ export default function ChatItem({ friend }: { friend: IMember }) {
     });
 
     return (
-        <div className="flex flex-col h-screen bg-[#f0f2f5] w-full">
+        <div className={`flex flex-col h-screen bg-[#f0f2f5] w-full`}>
             {/* Chat header */}
             <ChatItemHeader friend={friend} />
 
@@ -32,7 +34,11 @@ export default function ChatItem({ friend }: { friend: IMember }) {
                 {messagesList.map((message, idx) => (
                     <div
                         key={idx}
-                        className={`chat ${message.clientId === friend.username ? "chat-start" : "chat-end"}`}
+                        className={`chat ${
+                            message.clientId === friend.username
+                                ? "chat-start"
+                                : "chat-end"
+                        }`}
                     >
                         <div className="chat-bubble">{message.text}</div>
                     </div>
