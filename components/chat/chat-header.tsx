@@ -1,49 +1,40 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-    RoomOptionsDefaults,
-    usePresence,
-    usePresenceListener,
-    useRoom,
-} from "@ably/chat";
+import { useChatClient } from "@ably/chat";
 import { IMember } from "@/utils/types/conversation-types";
 import Image from "next/image";
-import useConnectionManager from "@/utils/hooks/useConnection";
 
 export default function ChatItemHeader({ friend }: { friend: IMember }) {
     const [isFriendOnline, setIsFriendOnline] = useState(false);
-    const { client } = useConnectionManager();
-    const { roomId } = useRoom();
+    const client = useChatClient();
 
-    const { room } = useRoom();
     useEffect(() => {
-        client.rooms
-            .get(roomId, {
-                presence: { enter: true },
-                typing: { timeoutMs: 2000 },
-            })
-            .then(async (room) => {
-                const onlineMembers = await room.presence.get();
-                const friendOnlineStatus = onlineMembers.filter(
-                    (m) => m.clientId === friend.username
-                )[0];
-                setIsFriendOnline(friendOnlineStatus ? true : false);
+        const roomOptions = {
+            presence: { enter: true },
+        };
+        client.rooms.get("online-users", roomOptions).then((room) => {
+            room.presence
+                .isUserPresent(friend.username)
+                .then((isOnline) => setIsFriendOnline(isOnline));
+            room.presence.subscribe(({ clientId, action }) => {
+                console.log({ clientId, action });
+                if (clientId === friend.username) {
+                    setIsFriendOnline(action === "leave" ? false : true);
+                }
             });
-    }, []);
+        });
+    }, [friend.username]);
 
     // use
     /* Subscribe to presence events */
     // usePresence();
 
     /* Listen to the events, and update user's online status */
-    usePresenceListener({
-        listener: ({ clientId, action }) => {
-            if (clientId === friend.username) {
-                setIsFriendOnline(action === "leave" ? false : true);
-            }
-        },
-    });
+    // usePresenceListener({
+    //     listener: ({ clientId, action }) => {
+    //     },
+    // });
 
     return (
         <div className="bg-[#075e54] text-white p-4 flex items-center space-x-4">

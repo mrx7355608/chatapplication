@@ -1,7 +1,7 @@
 "use client";
 import { useMessages } from "@ably/chat";
-import { IMember } from "@/utils/types/conversation-types";
-import { useEffect, useState } from "react";
+import { IConversation, IMember } from "@/utils/types/conversation-types";
+import { useState } from "react";
 import ChatItemHeader from "./chat-header";
 import ChatItemMessageInput from "./chat-item-message-input";
 
@@ -12,10 +12,6 @@ type Message = {
 
 export default function ChatItem({ friend }: { friend: IMember }) {
     const [messagesList, setMessagesList] = useState<Message[]>([]);
-
-    useEffect(() => {
-        console.log("Rendered chat with Friend:", friend.username);
-    }, []);
 
     useMessages({
         listener: (event) => {

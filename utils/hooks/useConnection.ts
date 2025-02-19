@@ -2,11 +2,10 @@
 
 import { useEffect } from "react";
 import { useToast } from "./useToast";
-import { connectAbly } from "@/lib/connect-ably";
-import { ChatClient } from "@ably/chat";
+import { connectAbly, getChatClient } from "@/lib/connect-ably";
 
 const ably = connectAbly();
-const client = new ChatClient(ably);
+const client = getChatClient();
 
 export default function useConnectionManager() {
     const { addToast } = useToast();
