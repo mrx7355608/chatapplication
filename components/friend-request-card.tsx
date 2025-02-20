@@ -39,7 +39,7 @@ export const FriendRequestCard = ({ request }: Props) => {
     };
 
     return (
-        <li className="flex flex-col items-center gap-4 border border-gray-800 bg-base-200 p-4 shadow-xl rounded-xl">
+        <li className="flex flex-col items-center gap-4 border border-neutral bg-base-200 p-4 shadow-xl rounded-xl">
             <div className="flex items-center w-full gap-3">
                 <Image
                     src={sender.image}
@@ -49,8 +49,8 @@ export const FriendRequestCard = ({ request }: Props) => {
                     className="rounded-full object-fit"
                 />
                 <div>
-                    <p className="font-bold text-gray-200">{sender.fullname}</p>
-                    <p className="text-sm text-gray-400">@{sender.username}</p>
+                    <p className="font-bold ">{sender.fullname}</p>
+                    <p className="text-sm ">@{sender.username}</p>
                 </div>
             </div>
 

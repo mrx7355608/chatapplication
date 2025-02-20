@@ -28,7 +28,7 @@ export default function ChatItemHeader({ friend }: { friend: IMember }) {
     }, [friend.username]);
 
     return (
-        <div className="bg-[#075e54] text-white p-4 flex items-center space-x-4">
+        <div className="bg-base-200 border border-neutral border-x-0 border-t-0 shadow  p-4 flex items-center space-x-4">
             <div className="w-10 h-10 rounded-full bg-gray-300 flex-shrink-0">
                 <Image
                     src={friend.image}
@@ -40,7 +40,7 @@ export default function ChatItemHeader({ friend }: { friend: IMember }) {
             </div>
             <div>
                 <h2 className="font-semibold">{friend.fullname}</h2>
-                <p className="text-xs">
+                <p className="text-xs ">
                     {isFriendOnline ? "Online" : "Offline"}
                 </p>
             </div>

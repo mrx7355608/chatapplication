@@ -44,7 +44,7 @@ const VerticalNavbar = () => {
         }
     };
     return (
-        <nav className="relative flex flex-col items-center w-20 h-screen py-8 space-y-6 border-r border-gray-700 bg-base-200">
+        <nav className="relative flex flex-col items-center w-20 h-screen py-8 space-y-6 border-r border-neutral bg-base-200">
             {/* User Profile */}
             <SignedIn>
                 {loading ? (

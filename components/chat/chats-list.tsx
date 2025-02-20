@@ -15,9 +15,9 @@ export default function ChatsList({ setActiveChat }: Props) {
     const { loading, chats } = useChats();
 
     return (
-        <div className="w-[350px] h-screen flex flex-col bg-transparent border-r border-gray-700">
+        <div className="min-w-[350px] h-screen flex flex-col bg-transparent border-r border-neutral">
             {/* SEARCH BAR */}
-            <label className="input input-bordered flex items-center gap-2 px-4 m-2 my-4">
+            <label className="input rounded-md bg-base-200 input-bordered shadow-lg flex items-center gap-2 px-4 m-2 my-4">
                 <input type="text" className="grow" placeholder="Search" />
                 <Search size={18} />
             </label>
@@ -56,7 +56,7 @@ function ChatUser({ chat, setActiveChat }: ChatUserProps) {
 
     return (
         <div
-            className="flex items-center p-3 hover:bg-gray-800 cursor-pointer"
+            className="flex items-center p-3 hover:bg-base-200 cursor-pointer"
             onClick={setActiveChat}
         >
             <Image
@@ -68,12 +68,10 @@ function ChatUser({ chat, setActiveChat }: ChatUserProps) {
             />
             <div className="flex-1">
                 <div className="flex justify-between items-baseline">
-                    <h2 className="text-sm font-semibold text-gray-100">
-                        {friend.fullname}
-                    </h2>
-                    <span className="text-xs text-gray-500">11:30 AM</span>
+                    <h2 className="font-semibold">{friend.fullname}</h2>
+                    <span className="text-xs text-mute ">11:30 AM</span>
                 </div>
-                <p className="text-sm text-gray-400 truncate">
+                <p className="text-sm truncate">
                     Hello! are you available for a chat?
                 </p>
             </div>

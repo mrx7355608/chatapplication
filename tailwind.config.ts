@@ -9,6 +9,6 @@ export default {
     ],
     plugins: [daisyui],
     daisyui: {
-        themes: ["sunset", "dracula", "nord"],
+        themes: ["sunset", "dracula", "business", "cyberpunk"],
     },
 } satisfies Config;

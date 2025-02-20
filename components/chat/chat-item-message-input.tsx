@@ -1,11 +1,17 @@
-import { Send } from "lucide-react";
+import { Send, Smile } from "lucide-react";
 import { useState, ChangeEvent } from "react";
 import { useMessages, useTyping } from "@ably/chat";
 import { useUser } from "@clerk/nextjs";
+import EmojiPicker, {
+    EmojiClickData,
+    EmojiStyle,
+    Theme,
+} from "emoji-picker-react";
 
 export default function ChatItemMessageInput() {
     const [message, setMessage] = useState("");
     const [typingUser, setTypingUser] = useState("");
+    const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
 
     const { user } = useUser();
     const { send } = useMessages();
@@ -33,27 +39,59 @@ export default function ChatItemMessageInput() {
         setMessage("");
     };
 
+    const handleEmojiChange = (e: EmojiClickData) => {
+        setMessage(e.emoji);
+        start();
+    };
+
+    const toggleEmojiPicker = () => setIsEmojiPickerOpen(!isEmojiPickerOpen);
+
     return (
         <>
             {/* Typing indicator */}
-            <div className="w-full px-4">
+            <div className="w-full flex items-center gap-3 px-4 rounded-t-lg bg-base-200">
                 {error && <p className="text-error">{error.message}</p>}
-                {typingUser && <p>{typingUser} is typing...</p>}
+                {typingUser && (
+                    <>
+                        <span className="loading loading-dots loading-sm"></span>
+                        <p>{typingUser} is typing...</p>
+                    </>
+                )}
             </div>
 
             {/* Message Input */}
-            <form onSubmit={handleSubmit} className="p-4 bg-[#f0f2f5] w-full">
+
+            <form
+                onSubmit={handleSubmit}
+                className="relative p-3 pb-4 bg-base-100 w-full border border-x-0 border-b-0 border-neutral"
+            >
+                <EmojiPicker
+                    open={isEmojiPickerOpen}
+                    onEmojiClick={handleEmojiChange}
+                    theme={Theme.DARK}
+                    lazyLoadEmojis={true}
+                    emojiStyle={EmojiStyle.TWITTER}
+                    skinTonesDisabled={true}
+                    style={{ position: "absolute", bottom: 70, left: 0 }}
+                />
                 <div className="flex items-center space-x-2">
+                    <button
+                        type="button"
+                        className="btn btn-square btn-ghost rounded-md"
+                        onClick={toggleEmojiPicker}
+                    >
+                        <Smile size={23} />
+                    </button>
                     <input
                         type="text"
                         placeholder="Type a message"
-                        className="input input-bordered border w-full flex-1"
+                        className="input bg-base-200 input-bordered rounded-md w-full flex-1"
                         value={message}
                         onChange={handleChange}
                     />
                     <button
                         type="submit"
-                        className="btn btn-success btn-square"
+                        className="btn btn-info btn-square rounded-md"
                     >
                         <Send size={20} />
                     </button>

@@ -25,12 +25,12 @@ export default function ChatItem({ chat }: { chat: IConversation }) {
     });
 
     return (
-        <div className={`flex flex-col h-screen bg-[#f0f2f5] w-full`}>
+        <div className={`flex flex-col h-screen bg-transparent w-full`}>
             {/* Chat header */}
             <ChatItemHeader friend={friend} />
 
             {/* Chat messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-2 w-full">
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 w-full bg-base-100">
                 {messagesList.map((message, idx) => (
                     <div
                         key={idx}

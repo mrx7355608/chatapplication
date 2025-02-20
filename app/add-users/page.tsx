@@ -34,8 +34,8 @@ export default function SearchFriends() {
             const response = await fetch(`/api/search-users?username=${query}`);
             const result = await response.json();
             setUser(result.data);
-        } catch (err: any) {
-            addToast("error", "Error", err.message);
+        } catch (err) {
+            addToast("error", "Error", (err as Error).message);
         } finally {
             setLoading(false);
         }
@@ -55,7 +55,7 @@ export default function SearchFriends() {
                     className="w-full input input-bordered rounded-xl mb-4"
                 />
                 <button
-                    className="btn btn-neutral text-white rounded-xl"
+                    className="btn btn-neutral rounded-xl"
                     disabled={loading}
                 >
                     {loading ? <Spinner size="sm" /> : "Search"}
@@ -84,13 +84,13 @@ function UserCard({ user }: { user: IUser }) {
         addToast(
             ok ? "success" : "error", // type
             ok ? "Success!" : "Error!", // Title
-            error ? error : "Requet sent successfully", // Message
+            error ? error : "Requet sent successfully" // Message
         );
         setLoading(false);
     };
 
     return (
-        <div className="flex items-center gap-3 border p-4  rounded-lg bg-base-200 border-gray-800 shadow-lg">
+        <div className="flex items-center gap-3 border p-4  rounded-lg bg-base-200 border-neutral shadow-lg">
             <Image
                 src={user.image}
                 width={60}
@@ -99,8 +99,8 @@ function UserCard({ user }: { user: IUser }) {
                 className="rounded-full object-fit"
             />
             <div>
-                <p className="font-bold text-gray-200">{user.fullname}</p>
-                <p className="text-sm text-gray-400">@{user.username}</p>
+                <p className="font-bold ">{user.fullname}</p>
+                <p className="text-sm ">@{user.username}</p>
             </div>
 
             {/* ADD FRIEND BUTTON */}

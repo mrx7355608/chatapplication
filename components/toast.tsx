@@ -20,7 +20,7 @@ const Toast: React.FC<IToast & { onClose: () => void }> = ({
     const Icon = iconMap[type];
 
     return (
-        <div className={`alert shadow-lg border border-gray-800 min-w-[400px]`}>
+        <div className={`alert shadow-lg border border-neutral min-w-[400px]`}>
             <Icon className={`h-6 w-6 text-${type}`} />
             <div>
                 <h3 className="font-bold">{title}</h3>
