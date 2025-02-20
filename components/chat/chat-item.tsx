@@ -1,7 +1,7 @@
 "use client";
 import { useMessages } from "@ably/chat";
 import { IConversation } from "@/utils/types/conversation-types";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatItemHeader from "./chat-header";
 import ChatItemMessageInput from "./chat-item-message-input";
 import { useUser } from "@clerk/nextjs";
@@ -16,6 +16,17 @@ export default function ChatItem({ chat }: { chat: IConversation }) {
     const { user1, user2 } = chat;
     const { user: loggedInUser } = useUser();
     const friend = user1.username === loggedInUser?.username ? user2 : user1;
+    const messagesListRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (!messagesListRef.current) {
+            return;
+        }
+
+        const div = messagesListRef.current;
+        div.scrollTop = div.scrollHeight;
+        console.log("rendering");
+    });
 
     useMessages({
         listener: (event) => {
@@ -30,7 +41,10 @@ export default function ChatItem({ chat }: { chat: IConversation }) {
             <ChatItemHeader friend={friend} />
 
             {/* Chat messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-2 w-full bg-base-100">
+            <div
+                ref={messagesListRef}
+                className="flex-1 overflow-y-auto p-4 space-y-2 w-full bg-base-100 scroll-smooth"
+            >
                 {messagesList.map((message, idx) => (
                     <div
                         key={idx}
@@ -40,7 +54,9 @@ export default function ChatItem({ chat }: { chat: IConversation }) {
                                 : "chat-end"
                         }`}
                     >
-                        <div className="chat-bubble">{message.text}</div>
+                        <div className="chat-bubble bg-neutral">
+                            {message.text}
+                        </div>
                     </div>
                 ))}
             </div>

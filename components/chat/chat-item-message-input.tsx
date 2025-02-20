@@ -49,15 +49,15 @@ export default function ChatItemMessageInput() {
     return (
         <>
             {/* Typing indicator */}
-            <div className="w-full flex items-center gap-3 px-4 rounded-t-lg bg-base-200">
-                {error && <p className="text-error">{error.message}</p>}
-                {typingUser && (
+            {error && <p className="text-error">{error.message}</p>}
+            {typingUser && (
+                <div className="w-full flex items-center gap-3 px-4 py-2 rounded-t-lg bg-base-200">
                     <>
                         <span className="loading loading-dots loading-sm"></span>
                         <p>{typingUser} is typing...</p>
                     </>
-                )}
-            </div>
+                </div>
+            )}
 
             {/* Message Input */}
 
