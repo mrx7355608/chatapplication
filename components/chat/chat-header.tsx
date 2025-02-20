@@ -25,7 +25,7 @@ export default function ChatItemHeader({ friend }: { friend: IMember }) {
         };
 
         isFriendOnline();
-    }, []);
+    }, [friend.username]);
 
     return (
         <div className="bg-[#075e54] text-white p-4 flex items-center space-x-4">
