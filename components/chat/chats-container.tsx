@@ -3,13 +3,11 @@
 import { useState } from "react";
 import ChatItem from "./chat-item";
 import ChatsList from "./chats-list";
+import { ChatRoomProvider } from "@ably/chat";
 import { IConversation } from "@/utils/types/conversation-types";
-import { ChatClientProvider, ChatRoomProvider } from "@ably/chat";
-import useConnectionManager from "@/utils/hooks/useConnection";
 
 export default function ChatsContainer() {
     const [activeChat, setActiveChat] = useState<IConversation | null>(null);
-    const { client } = useConnectionManager();
     const roomOptions = {
         typing: {
             timeoutMs: 1000,
@@ -17,15 +15,13 @@ export default function ChatsContainer() {
     };
 
     return (
-        <ChatClientProvider client={client}>
-            <div className="flex w-full">
-                <ChatsList setActiveChat={setActiveChat} />
-                {activeChat && (
-                    <ChatRoomProvider id={activeChat.id} options={roomOptions}>
-                        <ChatItem chat={activeChat} />
-                    </ChatRoomProvider>
-                )}
-            </div>
-        </ChatClientProvider>
+        <div className="flex w-full">
+            <ChatsList setActiveChat={setActiveChat} />
+            {activeChat && (
+                <ChatRoomProvider id={activeChat.id} options={roomOptions}>
+                    <ChatItem chat={activeChat} />
+                </ChatRoomProvider>
+            )}
+        </div>
     );
 }

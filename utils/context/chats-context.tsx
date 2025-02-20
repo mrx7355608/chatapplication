@@ -9,7 +9,8 @@ import {
     useEffect,
 } from "react";
 import { IConversation } from "../types/conversation-types";
-import useConnectionManager from "../hooks/useConnection";
+import { ChatClient, ChatClientProvider } from "@ably/chat";
+import { Realtime } from "ably";
 
 interface IChatsContext {
     loading: boolean;
@@ -22,10 +23,15 @@ const ChatsContext = createContext<IChatsContext>({
 
 export const useChats = () => useContext(ChatsContext);
 
+const ably = new Realtime({
+    authUrl: "http://localhost:3000/api/ably-authenticate",
+});
+const client = new ChatClient(ably);
+
 export const ChatsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [chats, setChats] = useState<IConversation[]>([]);
     const [loading, setLoading] = useState(true);
-    const { client } = useConnectionManager();
+
     const roomOptions = {
         presence: { enter: true },
     };
@@ -55,7 +61,7 @@ export const ChatsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     return (
         <ChatsContext.Provider value={{ loading, chats }}>
-            {children}
+            <ChatClientProvider client={client}>{children}</ChatClientProvider>
         </ChatsContext.Provider>
     );
 };
