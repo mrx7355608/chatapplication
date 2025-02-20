@@ -7,6 +7,7 @@ import ToastProvider from "@/utils/context/toast-context";
 import NotificationsListener from "@/components/notifications-listener";
 import { ChatsProvider } from "@/utils/context/chats-context";
 import ClientConnectionIndicator from "@/components/client-connection-indicator";
+import ThemeLoader from "@/components/theme-loader";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
                 className={`flex ${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <ClerkProvider>
+                    <ThemeLoader />
                     <ToastProvider>
                         <VerticalNavbar />
                         <NotificationsListener />

@@ -1,5 +1,6 @@
 import React from "react";
 import { Palette } from "lucide-react";
+import ThemeSelector from "@/components/theme-selector";
 
 export default function Settings() {
     return (
@@ -8,59 +9,8 @@ export default function Settings() {
             <div className="flex gap-3 items-center p-4 border border-x-0 border-b-neutral border-t-0">
                 <Palette size={25} />
                 <p className="font-medium">Theme</p>
-                <ThemeMenu />
+                <ThemeSelector />
             </div>
         </div>
     );
 }
-
-const ThemeMenu = () => {
-    return (
-        <div className="ml-auto dropdown">
-            <div tabIndex={0} role="button" className="btn m-1">
-                Theme
-            </div>
-            <ul
-                tabIndex={0}
-                className="dropdown-content bg-base-300 rounded-box z-[1] w-52 p-2 shadow-2xl"
-            >
-                <li>
-                    <input
-                        type="radio"
-                        name="theme-dropdown"
-                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                        aria-label="Default"
-                        value="sunset"
-                    />
-                </li>
-                <li>
-                    <input
-                        type="radio"
-                        name="theme-dropdown"
-                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                        aria-label="Dracula"
-                        value="dracula"
-                    />
-                </li>
-                <li>
-                    <input
-                        type="radio"
-                        name="theme-dropdown"
-                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                        aria-label="Cyberpunk"
-                        value="cyberpunk"
-                    />
-                </li>
-                <li>
-                    <input
-                        type="radio"
-                        name="theme-dropdown"
-                        className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                        aria-label="Business"
-                        value="business"
-                    />
-                </li>
-            </ul>
-        </div>
-    );
-};
