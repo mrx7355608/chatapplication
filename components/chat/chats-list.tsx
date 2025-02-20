@@ -15,9 +15,9 @@ export default function ChatsList({ setActiveChat }: Props) {
     const { loading, chats } = useChats();
 
     return (
-        <div className="min-w-[350px] h-screen flex flex-col bg-transparent border-r border-neutral">
+        <div className="w-full lg:w-[350px] lg:min-w-[350px] h-screen flex flex-col bg-transparent border-r border-neutral">
             {/* SEARCH BAR */}
-            <label className="input rounded-md bg-base-200 input-bordered shadow-lg flex items-center gap-2 px-4 m-2 my-4">
+            <label className="input rounded-md bg-base-100 input-bordered shadow-lg flex items-center gap-2 px-4 m-2 my-4">
                 <input type="text" className="grow" placeholder="Search" />
                 <Search size={18} />
             </label>

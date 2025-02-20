@@ -15,7 +15,7 @@ export default function ThemeSelector() {
     };
 
     return (
-        <div className="ml-auto dropdown">
+        <div className="ml-auto dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn m-1">
                 Theme
             </div>

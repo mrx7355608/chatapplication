@@ -52,10 +52,10 @@ export default function SearchFriends() {
                     placeholder="Search by username"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="w-full input input-bordered rounded-xl mb-4"
+                    className="w-full input input-bordered rounded-md mb-4"
                 />
                 <button
-                    className="btn btn-neutral rounded-xl"
+                    className="btn btn-neutral rounded-md"
                     disabled={loading}
                 >
                     {loading ? <Spinner size="sm" /> : "Search"}

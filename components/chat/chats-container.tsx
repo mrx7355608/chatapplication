@@ -16,12 +16,23 @@ export default function ChatsContainer() {
 
     return (
         <div className="flex w-full">
-            <ChatsList setActiveChat={setActiveChat} />
-            {activeChat && (
-                <ChatRoomProvider id={activeChat.id} options={roomOptions}>
-                    <ChatItem chat={activeChat} />
-                </ChatRoomProvider>
-            )}
+            <div className="flex lg:hidden w-full">
+                {activeChat ? (
+                    <ChatRoomProvider id={activeChat.id} options={roomOptions}>
+                        <ChatItem chat={activeChat} />
+                    </ChatRoomProvider>
+                ) : (
+                    <ChatsList setActiveChat={setActiveChat} />
+                )}
+            </div>
+            <div className="hidden lg:flex w-full">
+                <ChatsList setActiveChat={setActiveChat} />
+                {activeChat && (
+                    <ChatRoomProvider id={activeChat.id} options={roomOptions}>
+                        <ChatItem chat={activeChat} />
+                    </ChatRoomProvider>
+                )}
+            </div>
         </div>
     );
 }

@@ -8,6 +8,7 @@ import NotificationsListener from "@/components/notifications-listener";
 import { ChatsProvider } from "@/utils/context/chats-context";
 import ClientConnectionIndicator from "@/components/client-connection-indicator";
 import ThemeLoader from "@/components/theme-loader";
+import MobileNavbar from "@/components/mobile-navbar";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -32,12 +33,13 @@ export default function RootLayout({
     return (
         <html lang="en" data-theme="sunset">
             <body
-                className={`flex ${geistSans.variable} ${geistMono.variable} antialiased`}
+                className={`flex flex-col lg:flex-row ${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <ClerkProvider>
                     <ThemeLoader />
                     <ToastProvider>
                         <VerticalNavbar />
+                        <MobileNavbar />
                         <NotificationsListener />
                         <ChatsProvider>
                             <ClientConnectionIndicator />
