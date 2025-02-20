@@ -10,31 +10,22 @@ export default function ChatItemHeader({ friend }: { friend: IMember }) {
     const client = useChatClient();
 
     useEffect(() => {
-        const roomOptions = {
-            presence: { enter: true },
-        };
-        client.rooms.get("online-users", roomOptions).then((room) => {
-            room.presence
-                .isUserPresent(friend.username)
-                .then((isOnline) => setIsFriendOnline(isOnline));
+        const isFriendOnline = async () => {
+            const room = await client.rooms.get("online-users", {
+                presence: { enter: true },
+            });
+            const isOnline = await room.presence.isUserPresent(friend.username);
+            setIsFriendOnline(isOnline);
+
             room.presence.subscribe(({ clientId, action }) => {
-                console.log({ clientId, action });
                 if (clientId === friend.username) {
                     setIsFriendOnline(action === "leave" ? false : true);
                 }
             });
-        });
-    }, [friend.username]);
+        };
 
-    // use
-    /* Subscribe to presence events */
-    // usePresence();
-
-    /* Listen to the events, and update user's online status */
-    // usePresenceListener({
-    //     listener: ({ clientId, action }) => {
-    //     },
-    // });
+        isFriendOnline();
+    }, []);
 
     return (
         <div className="bg-[#075e54] text-white p-4 flex items-center space-x-4">

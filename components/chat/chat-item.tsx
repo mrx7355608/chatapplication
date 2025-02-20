@@ -1,17 +1,21 @@
 "use client";
 import { useMessages } from "@ably/chat";
-import { IConversation, IMember } from "@/utils/types/conversation-types";
+import { IConversation } from "@/utils/types/conversation-types";
 import { useState } from "react";
 import ChatItemHeader from "./chat-header";
 import ChatItemMessageInput from "./chat-item-message-input";
+import { useUser } from "@clerk/nextjs";
 
 type Message = {
     clientId: string;
     text: string;
 };
 
-export default function ChatItem({ friend }: { friend: IMember }) {
+export default function ChatItem({ chat }: { chat: IConversation }) {
     const [messagesList, setMessagesList] = useState<Message[]>([]);
+    const { user1, user2 } = chat;
+    const { user: loggedInUser } = useUser();
+    const friend = user1.username === loggedInUser?.username ? user2 : user1;
 
     useMessages({
         listener: (event) => {
