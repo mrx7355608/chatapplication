@@ -2,7 +2,7 @@
 
 import { useState, useCallback, createContext } from "react";
 import Toast from "@/components/toast";
-import { IToast, IToastContext, ToastType } from "@/types/toast-types";
+import { IToast, IToastContext, ToastType } from "@/utils/types/toast-types";
 
 /* Toast Context */
 export const ToastContext = createContext<IToastContext | undefined>(undefined);
@@ -19,7 +19,7 @@ const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
             setToasts((prev) => [...prev, { id, type, title, message }]);
             setTimeout(() => removeToast(id), 8000);
         },
-        [],
+        []
     );
 
     const removeToast = useCallback((id: number) => {
@@ -27,7 +27,7 @@ const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
     }, []);
 
     return (
-        <ToastContext.Provider value={{ addToast, removeToast }}>
+        <ToastContext.Provider value={{ addToast }}>
             {children}
             <div className="toast toast-start">
                 {toasts.map((toast) => (

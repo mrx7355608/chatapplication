@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ably/chat": "^0.4.0",
+    "@babel/preset-typescript": "^7.26.0",
     "@clerk/nextjs": "^6.11.0",
     "@clerk/themes": "^2.2.19",
     "@prisma/client": "^6.3.0",

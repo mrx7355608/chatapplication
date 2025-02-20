@@ -9,5 +9,4 @@ export interface IToast {
 
 export interface IToastContext {
     addToast: (type: ToastType, title: string, message: string) => void;
-    removeToast: (id: number) => void;
 }

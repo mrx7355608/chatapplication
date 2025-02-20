@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { AlertCircle, CheckCircle, Info, X, XCircle } from "lucide-react";
-import { IToast } from "@/types/toast-types";
+import { IToast } from "@/utils/types/toast-types";
 
 const iconMap = {
     success: CheckCircle,
