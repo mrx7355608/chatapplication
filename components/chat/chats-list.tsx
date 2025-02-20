@@ -3,16 +3,11 @@ import Image from "next/image";
 import { Search } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { IConversation } from "@/utils/types/conversation-types";
-import { Dispatch, SetStateAction } from "react";
 import { useChats } from "@/utils/context/chats-context";
 import ChatSkeletonLoading from "./chat-skeleton-loading";
 
-type Props = {
-    setActiveChat: Dispatch<SetStateAction<IConversation | null>>;
-};
-
-export default function ChatsList({ setActiveChat }: Props) {
-    const { loading, chats } = useChats();
+export default function ChatsList() {
+    const { loading, chats, setActiveChat } = useChats();
 
     return (
         <div className="w-full lg:w-[350px] lg:min-w-[350px] h-screen flex flex-col bg-transparent border-r border-neutral">

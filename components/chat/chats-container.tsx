@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useChats } from "@/utils/context/chats-context";
 import ChatItem from "./chat-item";
 import ChatsList from "./chats-list";
 import { ChatRoomProvider } from "@ably/chat";
-import { IConversation } from "@/utils/types/conversation-types";
 
 export default function ChatsContainer() {
-    const [activeChat, setActiveChat] = useState<IConversation | null>(null);
+    const { activeChat } = useChats();
+
     const roomOptions = {
         typing: {
             timeoutMs: 1000,
@@ -22,11 +22,11 @@ export default function ChatsContainer() {
                         <ChatItem chat={activeChat} />
                     </ChatRoomProvider>
                 ) : (
-                    <ChatsList setActiveChat={setActiveChat} />
+                    <ChatsList />
                 )}
             </div>
             <div className="hidden lg:flex w-full">
-                <ChatsList setActiveChat={setActiveChat} />
+                <ChatsList />
                 {activeChat && (
                     <ChatRoomProvider id={activeChat.id} options={roomOptions}>
                         <ChatItem chat={activeChat} />

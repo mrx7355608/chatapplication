@@ -43,7 +43,7 @@ export default function ChatItem({ chat }: { chat: IConversation }) {
             {/* Chat messages */}
             <div
                 ref={messagesListRef}
-                className="flex-1 overflow-y-auto p-4 space-y-2 w-full bg-base-100 scroll-smooth"
+                className="overflow-y-auto p-4 space-y-2 w-full bg-base-100 scroll-smooth flex-1"
             >
                 {messagesList.map((message, idx) => (
                     <div

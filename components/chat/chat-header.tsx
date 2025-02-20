@@ -5,10 +5,12 @@ import { useChatClient } from "@ably/chat";
 import { IMember } from "@/utils/types/conversation-types";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
+import { useChats } from "@/utils/context/chats-context";
 
 export default function ChatItemHeader({ friend }: { friend: IMember }) {
     const [isFriendOnline, setIsFriendOnline] = useState(false);
     const client = useChatClient();
+    const { setActiveChat } = useChats();
 
     useEffect(() => {
         const isFriendOnline = async () => {
@@ -29,8 +31,13 @@ export default function ChatItemHeader({ friend }: { friend: IMember }) {
     }, [friend.username]);
 
     return (
-        <div className="bg-base-200 border border-neutral border-x-0 border-t-0 shadow  p-4 flex items-center space-x-4">
-            <ArrowLeft size={20} className="lg:hidden" />
+        <div className="bg-base-200 border border-neutral border-x-0 border-t-0 shadow p-4 flex items-center space-x-4">
+            <button
+                className="lg:hidden btn btn-circle btn-ghost btn-sm"
+                onClick={() => setActiveChat(null)}
+            >
+                <ArrowLeft size={20} />
+            </button>
             <div className="w-10 h-10 rounded-full bg-gray-300 flex-shrink-0">
                 <Image
                     src={friend.image}
