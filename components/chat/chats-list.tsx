@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { IConversation } from "@/utils/types/conversation-types";
 import { Dispatch, SetStateAction } from "react";
 import { useChats } from "@/utils/context/chats-context";
+import ChatSkeletonLoading from "./chat-skeleton-loading";
 
 type Props = {
     setActiveChat: Dispatch<SetStateAction<IConversation | null>>;
@@ -24,7 +25,11 @@ export default function ChatsList({ setActiveChat }: Props) {
             {/* LIST */}
             <div className="flex-1 overflow-y-auto">
                 {loading ? (
-                    <p>Loading...</p>
+                    <>
+                        <ChatSkeletonLoading />
+                        <ChatSkeletonLoading />
+                        <ChatSkeletonLoading />
+                    </>
                 ) : (
                     chats.map((chat) => (
                         <ChatUser
