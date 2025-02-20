@@ -37,14 +37,14 @@ const VerticalNavbar = () => {
 
             /* Execute clerk's signOut() */
             await signOut();
-        } catch (err: any) {
-            console.log("Error:", err.message);
+        } catch (err) {
+            console.log("Error:", (err as Error).message);
         } finally {
             setLoading(false);
         }
     };
     return (
-        <nav className="flex flex-col items-center w-20 h-screen py-8 space-y-6 border-r border-gray-700 bg-base-200">
+        <nav className="relative flex flex-col items-center w-20 h-screen py-8 space-y-6 border-r border-gray-700 bg-base-200">
             {/* User Profile */}
             <SignedIn>
                 {loading ? (
@@ -98,14 +98,13 @@ const NavButton = ({
     label: string;
     url: string;
 }) => (
-    <Link href={url}>
-        <button className="btn btn-square btn-ghost">
-            <Icon size={25} />
-            <span className="absolute left-full ml-4 px-2 py-0 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm">
-                {label}
-            </span>
-        </button>
-    </Link>
+    <div className="tooltip tooltip-right" data-tip={label}>
+        <Link href={url}>
+            <button className="btn btn-square btn-ghost">
+                <Icon size={25} />
+            </button>
+        </Link>
+    </div>
 );
 
 export default VerticalNavbar;
