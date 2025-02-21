@@ -9,6 +9,7 @@ import { sendNotification } from "@/lib/notifications-service";
 import { friendRequestsDB } from "@/utils/data/friend-requests.data";
 import { usersDB } from "@/utils/data/users.data";
 import { fcmTokensDB } from "@/utils/data/fcm-tokens.data";
+import { conversationsDB } from "@/utils/data/conversations.data";
 
 // Mocks
 jest.mock("@clerk/nextjs/server", () => ({
@@ -19,12 +20,13 @@ jest.mock("@clerk/nextjs/server", () => ({
 jest.mock("next/cache", () => ({
     revalidatePath: jest.fn(),
 }));
-jest.mock("../../lib/notifications-service", () => ({
+jest.mock("@/lib/notifications-service", () => ({
     sendNotification: jest.fn(),
 }));
-jest.mock("../../data/users.data");
-jest.mock("../../data/fcm-tokens.data");
-jest.mock("../../data/friend-requests.data");
+jest.mock("@/utils/data/users.data");
+jest.mock("@/utils/data/fcm-tokens.data");
+jest.mock("@/utils/data/conversations.data");
+jest.mock("@/utils/data/friend-requests.data");
 
 // Mock data
 const mockFriendRequest = {
@@ -92,16 +94,16 @@ describe("Server actions test", () => {
 
             // Assert
             expect(response.error).toBe(
-                "Cannot send request to an existing friend",
+                "Cannot send request to an existing friend"
             );
         });
         it("should send a friend request", async () => {
             // Mocks
             (usersDB.findById as jest.Mock).mockResolvedValue(
-                mockUserWithNoFriends,
+                mockUserWithNoFriends
             );
             (friendRequestsDB.create as jest.Mock).mockResolvedValue(
-                mockFriendRequest,
+                mockFriendRequest
             );
             (fcmTokensDB.find as jest.Mock).mockResolvedValue([]);
             (sendNotification as jest.Mock).mockResolvedValue(undefined);
@@ -119,6 +121,7 @@ describe("Server actions test", () => {
             // Mocks
             (friendRequestsDB.remove as jest.Mock).mockReturnValue({});
             (usersDB.update as jest.Mock).mockReturnValue({});
+            (conversationsDB.create as jest.Mock).mockResolvedValue({});
 
             // Call server action with mock IDs
             await acceptRequest("sender_123", "receiver_123", "request_123");
@@ -130,11 +133,11 @@ describe("Server actions test", () => {
             // Check if friend-lists of both users are updated or not
             expect(usersDB.addFriend).toHaveBeenCalledWith(
                 "receiver_123",
-                "sender_123",
+                "sender_123"
             );
             expect(usersDB.addMeAsFriend).toHaveBeenCalledWith(
                 "sender_123",
-                "receiver_123",
+                "receiver_123"
             );
             expect(usersDB.addFriend).toHaveBeenCalledTimes(1);
             expect(usersDB.addMeAsFriend).toHaveBeenCalledTimes(1);

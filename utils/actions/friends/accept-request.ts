@@ -8,7 +8,7 @@ import { conversationsDB } from "@/utils/data/conversations.data";
 export async function acceptRequest(
     senderId: string,
     myId: string,
-    friendRequestId: string,
+    friendRequestId: string
 ) {
     // 1. Delete the pending request
     await friendRequestsDB.remove(friendRequestId);
@@ -25,7 +25,7 @@ export async function acceptRequest(
 
         // 5. Revalidate the /pending-requests page to update the view
         revalidatePath("/pending-requests");
-    } catch (err: any) {
-        console.log(err.stack);
+    } catch (err) {
+        console.log((err as Error).stack);
     }
 }

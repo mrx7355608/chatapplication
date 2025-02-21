@@ -51,6 +51,7 @@ export default function useFcmToken() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ token }),
+            credentials: "include",
         });
         const result = await response.json();
         console.log({ result });
