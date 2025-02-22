@@ -1,6 +1,6 @@
 "use client";
 
-import { useToast } from "@/utils/hooks/useToast";
+import { useToast } from "@/hooks/useToast";
 import { useChatConnection } from "@ably/chat";
 import React, { useEffect } from "react";
 

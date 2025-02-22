@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import VerticalNavbar from "@/components/vertical-navbar";
-import ToastProvider from "@/utils/context/toast-context";
+import VerticalNavbar from "@/components/navbar/vertical-navbar";
+import ToastProvider from "@/context/toast-context";
 import NotificationsListener from "@/components/notifications-listener";
-import { ChatsProvider } from "@/utils/context/chats-context";
+import { ChatsProvider } from "@/context/chats-context";
 import ClientConnectionIndicator from "@/components/client-connection-indicator";
 import ThemeLoader from "@/components/theme-loader";
-import MobileNavbar from "@/components/mobile-navbar";
+import MobileNavbar from "@/components/navbar/mobile-navbar";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",

@@ -1,4 +1,4 @@
-import { usersDB } from "@/utils/data/users.data";
+import { usersDB } from "@/data/users.data";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 
@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     if (!usernameQuery) {
         return Response.json(
             { error: "Please enter a username to search" },
-            { status: 400 },
+            { status: 400 }
         );
     }
 

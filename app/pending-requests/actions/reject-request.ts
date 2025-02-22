@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { friendRequestsDB } from "@/utils/data/friend-requests.data";
+import { friendRequestsDB } from "@/data/friend-requests.data";
 
 export async function rejectRequest(requestId: string) {
     try {
@@ -10,7 +10,7 @@ export async function rejectRequest(requestId: string) {
 
         // 2. Revalidate the /pending-requests page to update the view
         revalidatePath("/pending-requests");
-    } catch (err: any) {
-        console.log(err.stack);
+    } catch (err) {
+        console.log((err as Error).stack);
     }
 }

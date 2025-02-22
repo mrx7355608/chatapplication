@@ -2,8 +2,8 @@
 import Image from "next/image";
 import { Search } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import { IConversation } from "@/utils/types/conversation-types";
-import { useChats } from "@/utils/context/chats-context";
+import { IConversation } from "@/types/conversation-types";
+import { useChats } from "@/context/chats-context";
 import ChatSkeletonLoading from "./chat-skeleton-loading";
 
 export default function ChatsList() {

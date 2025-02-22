@@ -1,8 +1,10 @@
 "use client";
+
 import Image from "next/image";
-import { acceptRequest, rejectRequest } from "@/utils/actions/friends";
 import { useState } from "react";
-import { Spinner } from "./spinner";
+import { Spinner } from "@/components/spinner";
+import { acceptRequest } from "../actions/accept-request";
+import { rejectRequest } from "../actions/reject-request";
 
 interface IFriendRequestSender {
     fullname: string;

@@ -2,7 +2,7 @@
 
 import { SignedIn, useAuth, UserButton } from "@clerk/nextjs";
 import React, { useState } from "react";
-import { Spinner } from "./spinner";
+import { Spinner } from "../spinner";
 import { LogOut } from "lucide-react";
 import { dark } from "@clerk/themes";
 

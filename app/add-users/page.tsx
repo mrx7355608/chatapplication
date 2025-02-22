@@ -1,10 +1,10 @@
 "use client";
 
-import { sendFriendRequest } from "@/utils/actions/friends";
-import { Spinner } from "@/components/spinner";
-import { useToast } from "@/utils/hooks/useToast";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
+import { Spinner } from "@/components/spinner";
+import { useToast } from "@/hooks/useToast";
+import { sendFriendRequest } from "./actions/send-request";
 
 interface IUser {
     id: string;

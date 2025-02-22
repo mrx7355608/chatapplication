@@ -1,7 +1,7 @@
 import { Webhook } from "svix";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { clerkClient } from "@clerk/nextjs/server";
-import { usersDB } from "@/utils/data/users.data";
+import { usersDB } from "@/data/users.data";
 import { checkHeaders } from "@/lib/webhook-utils";
 
 export async function POST(req: Request) {
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 
     if (!SIGNING_SECRET) {
         throw new Error(
-            "Error: Please add SIGNING_SECRET from Clerk Dashboard to .env or .env.local",
+            "Error: Please add SIGNING_SECRET from Clerk Dashboard to .env or .env.local"
         );
     }
 
@@ -31,8 +31,8 @@ export async function POST(req: Request) {
             "svix-timestamp": svix_timestamp,
             "svix-signature": svix_signature,
         }) as WebhookEvent;
-    } catch (err: any) {
-        console.error("Error: Could not verify webhook:", err.stack);
+    } catch (err) {
+        console.error("Error: Could not verify webhook:", (err as Error).stack);
         return new Response("Error: Verification error", {
             status: 400,
         });
@@ -65,8 +65,8 @@ export async function POST(req: Request) {
                 if (userToDelete) await usersDB.remove(userToDelete.id);
             }
         }
-    } catch (err: any) {
-        console.log(err.stack);
+    } catch (err) {
+        console.log((err as Error).stack);
         return new Response("Webhook received", { status: 200 });
     }
 

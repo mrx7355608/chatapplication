@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useChatClient } from "@ably/chat";
-import { IMember } from "@/utils/types/conversation-types";
+import { IMember } from "@/types/conversation-types";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import { useChats } from "@/utils/context/chats-context";
+import { useChats } from "@/context/chats-context";
 
 export default function ChatItemHeader({ friend }: { friend: IMember }) {
     const [isFriendOnline, setIsFriendOnline] = useState(false);

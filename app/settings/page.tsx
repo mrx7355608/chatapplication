@@ -1,6 +1,6 @@
 import React from "react";
 import { Palette } from "lucide-react";
-import ThemeSelector from "@/components/theme-selector";
+import ThemeSelector from "./components/theme-selector";
 
 export default function Settings() {
     return (

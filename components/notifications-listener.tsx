@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import useFcm from "@/utils/hooks/useFcm";
+import useFcm from "@/hooks/useFcm";
 
 const NotificationsListener = () => {
     // Fetches the fcm token and registers an eventListener to show notifications

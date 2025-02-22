@@ -1,6 +1,6 @@
 "use client";
 import { useMessages } from "@ably/chat";
-import { IConversation } from "@/utils/types/conversation-types";
+import { IConversation } from "@/types/conversation-types";
 import { useEffect, useRef, useState } from "react";
 import ChatItemHeader from "./chat-header";
 import ChatItemMessageInput from "./chat-item-message-input";

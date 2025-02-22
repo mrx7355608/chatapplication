@@ -2,7 +2,7 @@
 
 import { useState, useCallback, createContext } from "react";
 import Toast from "@/components/toast";
-import { IToast, IToastContext, ToastType } from "@/utils/types/toast-types";
+import { IToast, IToastContext, ToastType } from "@/types/toast-types";
 
 /* Toast Context */
 export const ToastContext = createContext<IToastContext | undefined>(undefined);

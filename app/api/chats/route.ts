@@ -1,5 +1,5 @@
-import { conversationsDB } from "@/utils/data/conversations.data";
-import { usersDB } from "@/utils/data/users.data";
+import { conversationsDB } from "@/data/conversations.data";
+import { usersDB } from "@/data/users.data";
 import { auth } from "@clerk/nextjs/server";
 
 export async function GET() {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useChats } from "@/utils/context/chats-context";
+import { useChats } from "@/context/chats-context";
 import ChatItem from "./chat-item";
 import ChatsList from "./chats-list";
 import { ChatRoomProvider } from "@ably/chat";
