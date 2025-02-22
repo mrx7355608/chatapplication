@@ -1,5 +1,5 @@
 import { Send, Smile } from "lucide-react";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useRef } from "react";
 import { useMessages, useTyping } from "@ably/chat";
 import { useUser } from "@clerk/nextjs";
 import EmojiPicker, {
@@ -11,7 +11,9 @@ import EmojiPicker, {
 export default function ChatItemMessageInput() {
     const [message, setMessage] = useState("");
     const [typingUser, setTypingUser] = useState("");
+    const [cursorPosition, setCursorPosition] = useState(0);
     const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
     const { user } = useUser();
     const { send } = useMessages();
@@ -30,6 +32,7 @@ export default function ChatItemMessageInput() {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
         setMessage(value);
+        setCursorPosition(e.target.selectionStart || 0);
         start();
     };
 
@@ -40,11 +43,24 @@ export default function ChatItemMessageInput() {
     };
 
     const handleEmojiChange = (e: EmojiClickData) => {
-        setMessage(e.emoji);
-        start();
+        // if (!inputRef.current) return;
+
+        const start = message.substring(0, cursorPosition);
+        const end = message.substring(cursorPosition);
+
+        const newMessage = start + e.emoji + end;
+        setMessage(newMessage);
+
+        // Restore cursor position after inserting the emoji
+        const newCursorPos = cursorPosition + e.emoji.length;
+        setCursorPosition(newCursorPos);
     };
 
-    const toggleEmojiPicker = () => setIsEmojiPickerOpen(!isEmojiPickerOpen);
+    const handleCursorChange = () => {
+        if (inputRef.current) {
+            setCursorPosition(inputRef.current.selectionStart || 0);
+        }
+    };
 
     return (
         <>
@@ -69,7 +85,6 @@ export default function ChatItemMessageInput() {
                     open={isEmojiPickerOpen}
                     onEmojiClick={handleEmojiChange}
                     theme={Theme.DARK}
-                    lazyLoadEmojis={true}
                     emojiStyle={EmojiStyle.TWITTER}
                     skinTonesDisabled={true}
                     style={{ position: "absolute", bottom: 70, left: 0 }}
@@ -78,7 +93,7 @@ export default function ChatItemMessageInput() {
                     <button
                         type="button"
                         className="btn btn-square btn-ghost rounded-md"
-                        onClick={toggleEmojiPicker}
+                        onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}
                     >
                         <Smile size={23} />
                     </button>
@@ -86,8 +101,11 @@ export default function ChatItemMessageInput() {
                         type="text"
                         placeholder="Type a message"
                         className="input bg-base-200 input-bordered rounded-md w-full flex-1"
+                        ref={inputRef}
                         value={message}
                         onChange={handleChange}
+                        onKeyUp={handleCursorChange}
+                        onClick={handleCursorChange}
                     />
                     <button
                         type="submit"

@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.emoji > img {
+    font-size: 25px;
+    display: inline;
+    margin: 0px 2px;
+}

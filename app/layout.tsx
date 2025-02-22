@@ -33,7 +33,7 @@ export default function RootLayout({
     return (
         <html lang="en" data-theme="sunset">
             <body
-                className={`flex flex-col lg:flex-row ${geistSans.variable} ${geistMono.variable} antialiased`}
+                className={`flex flex-col lg:flex-row ${geistSans.variable} ${geistMono.variable}  antialiased`}
             >
                 <ClerkProvider>
                     <ThemeLoader />

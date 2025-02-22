@@ -29,6 +29,7 @@ const ChatsContext = createContext<IChatsContext>({
 
 export const useChats = () => useContext(ChatsContext);
 
+console.log("Making ably request");
 const ably = new Realtime({
     authUrl: "http://localhost:3000/api/ably-authenticate",
 });

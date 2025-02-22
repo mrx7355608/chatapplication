@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import ChatItemHeader from "./chat-header";
 import ChatItemMessageInput from "./chat-item-message-input";
 import { useUser } from "@clerk/nextjs";
+import { Twemoji } from "react-emoji-render";
 
 type Message = {
     clientId: string;
@@ -25,7 +26,6 @@ export default function ChatItem({ chat }: { chat: IConversation }) {
 
         const div = messagesListRef.current;
         div.scrollTop = div.scrollHeight;
-        console.log("rendering");
     });
 
     useMessages({
@@ -54,8 +54,10 @@ export default function ChatItem({ chat }: { chat: IConversation }) {
                                 : "chat-end"
                         }`}
                     >
-                        <div className="chat-bubble bg-neutral">
-                            {message.text}
+                        <div className="chat-bubble bg-neutral text-lg ">
+                            <Twemoji svg className="inline emoji">
+                                {message.text.trim()}
+                            </Twemoji>
                         </div>
                     </div>
                 ))}
