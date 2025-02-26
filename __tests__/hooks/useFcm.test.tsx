@@ -1,11 +1,11 @@
 import { renderHook } from "@testing-library/react";
-import useFcmToken from "@/utils/hooks/useFcmToken";
+import useFcmToken from "@/hooks/useFcmToken";
 import { onMessage } from "firebase/messaging";
 import { createFCMApp } from "@/lib/firebase";
-import useFcm from "@/utils/hooks/useFcm";
+import useFcm from "@/hooks/useFcm";
 
-jest.mock("@/utils/hooks/useFcmToken");
-jest.mock("@/utils/hooks/useToast", () => ({
+jest.mock("@/hooks/useFcmToken");
+jest.mock("@/hooks/useToast", () => ({
     useToast: () => ({ addToast: jest.fn() }),
 }));
 jest.mock("@/lib/firebase");

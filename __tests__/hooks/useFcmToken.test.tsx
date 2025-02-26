@@ -1,13 +1,13 @@
-import useFcmToken from "@/utils/hooks/useFcmToken";
+import useFcmToken from "@/hooks/useFcmToken";
 import { renderHook, waitFor } from "@testing-library/react";
-import useNotificationsPermission from "@/utils/hooks/useNotificationPermission";
+import useNotificationsPermission from "@/hooks/useNotificationPermission";
 import { getToken } from "firebase/messaging";
 import { createFCMApp } from "@/lib/firebase";
 
 jest.mock("@/lib/firebase", () => ({
     createFCMApp: jest.fn(),
 }));
-jest.mock("@/utils/hooks/useNotificationPermission");
+jest.mock("@/hooks/useNotificationPermission");
 jest.mock("firebase/messaging", () => ({
     getToken: jest.fn(),
 }));

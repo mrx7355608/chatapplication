@@ -1,7 +1,7 @@
 import "@testing-library/react";
-import { useToast } from "@/utils/hooks/useToast";
+import { useToast } from "@/hooks/useToast";
 import { renderHook } from "@testing-library/react";
-import ToastProvider from "@/utils/context/toast-context";
+import ToastProvider from "@/context/toast-context";
 import { ReactNode } from "react";
 
 jest.mock("lucide-react", () => ({

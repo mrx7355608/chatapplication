@@ -1,15 +1,20 @@
 import {
     acceptRequest,
+} from "@/app/pending-requests/actions/accept-request";
+
+import {
     rejectRequest,
+} from "@/app/pending-requests/actions/reject-request";
+import {
     sendFriendRequest,
-} from "@/utils/actions/friends";
+} from "@/app/add-users/actions/send-request";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { sendNotification } from "@/lib/notifications-service";
-import { friendRequestsDB } from "@/utils/data/friend-requests.data";
-import { usersDB } from "@/utils/data/users.data";
-import { fcmTokensDB } from "@/utils/data/fcm-tokens.data";
-import { conversationsDB } from "@/utils/data/conversations.data";
+import { friendRequestsDB } from "@/data/friend-requests.data";
+import { usersDB } from "@/data/users.data";
+import { fcmTokensDB } from "@/data/fcm-tokens.data";
+import { conversationsDB } from "@/data/conversations.data";
 
 // Mocks
 jest.mock("@clerk/nextjs/server", () => ({
@@ -23,10 +28,10 @@ jest.mock("next/cache", () => ({
 jest.mock("@/lib/notifications-service", () => ({
     sendNotification: jest.fn(),
 }));
-jest.mock("@/utils/data/users.data");
-jest.mock("@/utils/data/fcm-tokens.data");
-jest.mock("@/utils/data/conversations.data");
-jest.mock("@/utils/data/friend-requests.data");
+jest.mock("@/data/users.data");
+jest.mock("@/data/fcm-tokens.data");
+jest.mock("@/data/conversations.data");
+jest.mock("@/data/friend-requests.data");
 
 // Mock data
 const mockFriendRequest = {

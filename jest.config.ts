@@ -15,7 +15,7 @@ const config: Config = {
         "^@/lib/(.*)$": "<rootDir>/lib/$1",
         "^@/components/(.*)$": "<rootDir>/components/$1",
         "^@/hooks/(.*)$": "<rootDir>/hooks/$1",
-        "^@/utils/(.*)$": "<rootDir>/utils/$1",
+        "^@/data/(.*)$": "<rootDir>/data/$1",
     },
 };
 
