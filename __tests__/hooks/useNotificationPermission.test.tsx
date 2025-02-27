@@ -1,4 +1,4 @@
-import useNotificationsPermission from "@/utils/hooks/useNotificationPermission";
+import useNotificationsPermission from "@/hooks/useNotificationPermission";
 import { renderHook, waitFor } from "@testing-library/react";
 
 describe("Testing useNotificationPermission() hook", () => {

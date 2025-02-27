@@ -24,6 +24,7 @@ export default function ChatItemMessageInput() {
                 return;
             }
             currentlyTyping.forEach((username) => {
+                console.log("-->", username);
                 setTypingUser(username !== user?.username ? username : "");
             });
         },
@@ -110,6 +111,7 @@ export default function ChatItemMessageInput() {
                     <button
                         type="submit"
                         className="btn btn-info btn-square rounded-md"
+                        aria-label="send-btn"
                     >
                         <Send size={20} />
                     </button>
