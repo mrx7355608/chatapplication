@@ -1,8 +1,17 @@
 "use client";
 import React from "react";
+import { Palette } from "lucide-react";
 
 export default function ThemeSelector() {
     const DEFAULT_THEME = "sunset";
+
+    const setCookie = (theme: string) => {
+        const expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 100);
+        document.cookie = `current-theme=${encodeURIComponent(
+            theme
+        )}; expires=${expires.toUTCString()}; path=/`;
+    };
 
     const changeTheme = (theme: string) => {
         const themes = ["sunset", "business", "dracula", "cyberpunk"];
@@ -11,13 +20,17 @@ export default function ThemeSelector() {
         }
 
         document.documentElement.setAttribute("data-theme", theme);
-        localStorage.setItem("current-theme", theme);
+        setCookie(theme);
     };
 
     return (
-        <div className="ml-auto dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn m-1">
-                Theme
+        <div className="dropdown dropdown-right">
+            <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost btn-square"
+            >
+                <Palette size={25} />
             </div>
             <ul
                 tabIndex={0}
