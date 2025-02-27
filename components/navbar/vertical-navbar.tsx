@@ -1,8 +1,9 @@
 "use client";
 
-import { MessageCircle, Settings, Clock, UserPlus } from "lucide-react";
+import { MessageCircle, Clock, UserPlus } from "lucide-react";
 import NavButton from "./nav-button";
 import CustomClerkMenu from "./custom-clerk-menu";
+import ThemeSelector from "../theme-selector";
 
 const VerticalNavbar = () => {
     return (
@@ -23,8 +24,8 @@ const VerticalNavbar = () => {
                 url="/pending-requests"
             />
 
-            {/* Settings */}
-            <NavButton icon={Settings} label="Settings" url="/settings" />
+            {/* Theme selector */}
+            <ThemeSelector />
         </nav>
     );
 };
