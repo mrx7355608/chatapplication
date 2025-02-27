@@ -5,15 +5,45 @@ import { useUser } from "@clerk/nextjs";
 import { IConversation } from "@/types/conversation-types";
 import { useChats } from "@/context/chats-context";
 import ChatSkeletonLoading from "./chat-skeleton-loading";
+import { useEffect, useState } from "react";
 
 export default function ChatsList() {
     const { loading, chats, setActiveChat } = useChats();
+    const { user } = useUser();
+    const [myChats, setMyChats] = useState(chats);
+    const [query, setQuery] = useState("");
+
+    useEffect(() => {
+        if (chats.length > 0) {
+            setMyChats(chats);
+        }
+        if (query.trim().length > 0) {
+            // Filter those chats whose fullname or username
+            // matches with the "query"
+            const filteredChats = chats.filter(({ user1, user2 }) => {
+                const friend =
+                    user1.username === user?.username ? user2 : user1;
+                console.log(friend.fullname);
+                const { fullname, username } = friend;
+                return (
+                    fullname.includes(query.toLowerCase()) ||
+                    username.includes(query.toLowerCase())
+                );
+            });
+            setMyChats(filteredChats);
+        }
+    }, [query, chats]);
 
     return (
         <div className="w-full lg:w-[350px] lg:min-w-[350px] h-screen flex flex-col bg-transparent border-r border-neutral">
             {/* SEARCH BAR */}
             <label className="input rounded-md bg-base-100 input-bordered shadow-lg flex items-center gap-2 px-4 m-2 my-4">
-                <input type="text" className="grow" placeholder="Search" />
+                <input
+                    type="text"
+                    className="grow"
+                    placeholder="Search"
+                    onChange={(e) => setQuery(e.target.value)}
+                />
                 <Search size={18} />
             </label>
 
@@ -26,7 +56,7 @@ export default function ChatsList() {
                         <ChatSkeletonLoading />
                     </>
                 ) : (
-                    chats.map((chat) => (
+                    myChats.map((chat) => (
                         <ChatUser
                             key={chat.id}
                             chat={chat}
